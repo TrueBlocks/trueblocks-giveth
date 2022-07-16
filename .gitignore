@@ -1,3 +1,14 @@
+test
+*.csv
+*.txt
+*.xlsx
+*.json
+
+.DS_Store
+
+one
+two
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

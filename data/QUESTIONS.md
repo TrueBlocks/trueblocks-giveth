@@ -1,0 +1,23 @@
+- When I query against the not-eligible-donations and eligible-donations endpoints, I do not get the project's address or id. This makes it very difficult to join data files
+
+- I need a way to determine the dates of the rounds
+  - I propose 14 day rounds starting the end of day the first Thursday of January and 14 days thereafter
+
+- I need a clear idea of why some transactions are eligible and some are not
+
+- Who maintains the purple list - are addresses ever removed from the purple list? What exactly is the purple list?
+
+- How do you select the block number? (chifra when End Of Round)
+
+- If I run the same query with identical parameters, I get different results. Simple fix -- add one additional field to the sort of the results: txhash
+
+- The users care about Rounds
+  - the API should allow them to pick a round (easy to produce) and fill in the date ranges 
+  - less error prone
+  - much easier to reproduce
+  - much easier to use
+  - all APIs should take 'round'
+
+- Without reproducability, you can't write valid tests
+
+- Need to be able to download the project information
