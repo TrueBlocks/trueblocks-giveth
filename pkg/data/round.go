@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/TrueBlocks/trueblocks-giveth/pkg/types"
+	"github.com/TrueBlocks/trueblocks-giveth/pkg/utils"
 	"github.com/bykof/gostradamus"
 )
 
@@ -40,8 +40,8 @@ func GetRounds() (rounds []Round) {
 	for i := 1; i <= 25; i++ {
 		rounds = append(rounds, Round{
 			Id:        i,
-			StartDate: types.NewDateTime(2021, 12, 10+(14*i), 16, 0, 0),
-			EndDate:   types.NewDateTime(2021, 12, 10+(14*(i+1)), 16, 0, -1),
+			StartDate: utils.NewDateTime(2021, 12, 10+(14*i), 16, 0, 0),
+			EndDate:   utils.NewDateTime(2021, 12, 10+(14*(i+1)), 16, 0, -1),
 			Available: getParams(i).Available,
 			Price:     getParams(i).Price,
 		})

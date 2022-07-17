@@ -29,5 +29,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// projectsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	projectsCmd.Flags().BoolP("categories", "c", false, "show only the categories for each project")
 }

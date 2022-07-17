@@ -21,3 +21,5 @@
 - Without reproducability, you can't write valid tests
 
 - Need to be able to download the project information
+
+- Is eligbile plus not-eligible all the transactions that went through the website?

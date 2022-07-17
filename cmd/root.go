@@ -11,6 +11,8 @@ import (
 
 var cfgFile string
 var format string
+var remote bool
+var verbose bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -42,6 +44,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.giveth.yaml)")
 	rootCmd.PersistentFlags().StringVar(&format, "fmt", "", "one of [json|csv|txt]")
+	rootCmd.PersistentFlags().BoolVar(&remote, "remote", false, "if present, some commands will pull data from Giveth's APIs")
+	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "if present, some commands will display extra data")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
