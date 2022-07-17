@@ -26,7 +26,7 @@ func RunDownload(cmd *cobra.Command, args []string) error {
 
 	var queries []Query
 	if dataType == "purple-list" {
-		url, fn := getParams("purpleList", format, data.Round{})
+		url, fn := getParams("purpleList", "json", data.Round{})
 		queries = append(queries, Query{Url: url, Fn: fn, Sleep: 3})
 
 	} else {
@@ -97,7 +97,7 @@ func getGivethFilename(cmd, format string, round data.Round) string {
 }
 
 func getParams(cmd, format string, round data.Round) (string, string) {
-	return getUrl(cmd, round), getGivethFilename(cmd, format, round)
+	return getUrl(cmd, format, round), getGivethFilename(cmd, format, round)
 }
 
 func isValidType(dataType string) bool {
@@ -125,6 +125,9 @@ func getDownloadOptions(cmd *cobra.Command, args []string) (rounds []data.Round,
 	format, err = cmd.Flags().GetString("fmt")
 	if err != nil {
 		log.Fatal(err)
+	}
+	if format == "" {
+		format = "csv"
 	}
 
 	dataType, err = cmd.Flags().GetString("data")

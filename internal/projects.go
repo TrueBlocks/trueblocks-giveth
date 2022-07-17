@@ -11,6 +11,8 @@ import (
 	"github.com/TrueBlocks/trueblocks-giveth/pkg/data"
 	"github.com/TrueBlocks/trueblocks-giveth/pkg/output"
 	"github.com/spf13/cobra"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // RunProjects runs the rounds command
@@ -99,7 +101,7 @@ func properTitle(input string) string {
 		if strings.Contains(smallwords, " "+word+" ") {
 			words[index] = word
 		} else {
-			words[index] = strings.Title(word)
+			words[index] = cases.Title(language.Und).String(word)
 		}
 	}
 	return strings.Join(words, " ")
