@@ -16,8 +16,6 @@ as a shorthand to a date range.`,
 }
 
 func init() {
-	rootCmd.AddCommand(roundsCmd)
-
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
@@ -27,5 +25,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// roundsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	roundsCmd.Flags().Uint64P("round", "r", 0, "Help message for toggle")
+	rootCmd.AddCommand(roundsCmd)
 }

@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/alecthomas/participle/v2 v2.0.0-alpha7 // indirect
 	github.com/btcsuite/btcd v0.22.0-beta // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
@@ -42,3 +43,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0 // indirect
 )
+
+replace github.com/TrueBlocks/trueblocks-core/src/apps/chifra => /Users/jrush/Development/trueblocks-core/src/apps/chifra

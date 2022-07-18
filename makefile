@@ -3,6 +3,6 @@ all:
 	@mv main ~/source/giveth
 
 test:
-	@./test
+	@./test.sh
 
 .PHONY: all test clean

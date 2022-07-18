@@ -36,17 +36,22 @@ type roundInternal struct {
 	Price     string `json:"price"` // need a string to preserve decimals
 }
 
-func GetRounds() (rounds []Round) {
-	for i := 1; i <= 25; i++ {
-		rounds = append(rounds, Round{
-			Id:        i,
-			StartDate: utils.NewDateTime(2021, 12, 10+(14*i), 16, 0, 0),
-			EndDate:   utils.NewDateTime(2021, 12, 10+(14*(i+1)), 16, 0, -1),
-			Available: getParams(i).Available,
-			Price:     getParams(i).Price,
-		})
+func GetRounds(filter, max int) (rounds []Round, err error) {
+	for i := 1; i <= max; i++ {
+		if filter == 0 || filter == i {
+			round := Round{
+				Id:        i,
+				StartDate: utils.NewDateTime(2021, 12, 10+(14*i), 16, 0, 0),
+				EndDate:   utils.NewDateTime(2021, 12, 10+(14*(i+1)), 16, 0, -1),
+				Available: getParams(i).Available,
+				Price:     getParams(i).Price,
+			}
+			if round.StartDate.Time().Before(gostradamus.Now().Time()) {
+				rounds = append(rounds, round)
+			}
+		}
 	}
-	return rounds
+	return rounds, nil
 }
 
 type Params struct {

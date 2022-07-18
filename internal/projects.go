@@ -2,7 +2,6 @@ package internal
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"sort"
 	"strconv"
@@ -17,12 +16,12 @@ import (
 
 // RunProjects runs the rounds command
 func RunProjects(cmd *cobra.Command, args []string) error {
-	projects, remote, categories, format, verbose, err := getProjectsOptions(cmd, args)
+	projects, categories, globals, err := getProjectsOptions(cmd, args)
 	if err != nil {
 		return err
 	}
 
-	if remote {
+	if globals.Script {
 		var url string = `curl --location --request POST 'https://mainnet.serve.giveth.io/graphql' --header 'Content-Type: application/json' --data-raw '{"query":"{projectById(id:%d) {id, title, balance, image, slug, slugHistory, creationDate, updatedAt, admin, description, walletAddress, impactLocation, qualityScore, verified, traceCampaignId, listed, givingBlocksId, status { id, symbol, name, description }, categories { name }, reaction { id }, adminUser { id, email, firstName, walletAddress }, organization { name, label, supportCustomTokens }, addresses {address, isRecipient, networkId }, totalReactions, totalDonations, totalTraceDonations}}","variables":{}}' | jq >data/raw/%05d.json; sleep 4`
 		for i := 1; i < int(float64(len(projects))*1.3); i++ {
 			fmt.Printf(strings.Replace(url, "\n", " ", -1)+"\n", i, i)
@@ -46,7 +45,7 @@ func RunProjects(cmd *cobra.Command, args []string) error {
 		for _, s := range sorted {
 			values := cats[s.Key]
 			fmt.Println(len(values), properTitle(s.Key))
-			if verbose {
+			if globals.Verbose {
 				for _, v := range values {
 					fmt.Println("\t", v)
 
@@ -57,25 +56,12 @@ func RunProjects(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	if format == "txt" || format == "csv" {
-		unused := data.SimpleProject{}
-		output.Header(unused, os.Stdout, format)
-		defer output.Footer(unused, os.Stdout, format)
-		for i, project := range projects {
-			if project.Id == "1389" {
-				fmt.Println(project)
-				fmt.Println()
-			}
-			output.Line(data.ToSimpleProject(&project), os.Stdout, format, i == 0)
-		}
-
-	} else {
-		unused := data.Project{}
-		output.Header(unused, os.Stdout, format)
-		defer output.Footer(unused, os.Stdout, format)
-		for i, project := range projects {
-			output.Line(project, os.Stdout, format, i == 0)
-		}
+	obj := toProjectInterface(data.Project{}, globals.Format)
+	output.Header(obj, os.Stdout, globals.Format)
+	defer output.Footer(obj, os.Stdout, globals.Format)
+	for i, project := range projects {
+		obj = toProjectInterface(project, globals.Format)
+		output.Line(obj, os.Stdout, globals.Format, i == 0)
 	}
 
 	return nil
@@ -108,30 +94,18 @@ func properTitle(input string) string {
 }
 
 // getProjectsOptions processes command line options for the Rounds command
-func getProjectsOptions(cmd *cobra.Command, args []string) (rounds []data.Project, remote bool, categories bool, format string, verbose bool, err error) {
-	format, err = cmd.Flags().GetString("fmt")
+func getProjectsOptions(cmd *cobra.Command, args []string) (projects []data.Project, categories bool, globals Globals, err error) {
+	globals, err = getGlobals("txt", cmd, args)
 	if err != nil {
-		log.Fatal(err)
-	}
-	if format == "" {
-		format = "txt"
+		return
 	}
 
-	remote, err = cmd.Flags().GetBool("remote")
-	if err != nil {
-		log.Fatal(err)
-	}
 	categories, err = cmd.Flags().GetBool("categories")
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
-	verbose, err = cmd.Flags().GetBool("verbose")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	projects := data.GetProjects()
+	projects = data.GetProjects()
 	for i := 0; i < len(projects); i++ {
 		markCore(&projects[i])
 	}
@@ -140,5 +114,12 @@ func getProjectsOptions(cmd *cobra.Command, args []string) (rounds []data.Projec
 		return projects[i].WalletAddress < projects[j].WalletAddress
 	})
 
-	return projects, remote, categories, format, verbose, err
+	return projects, categories, globals, err
+}
+
+func toProjectInterface(project data.Project, format string) interface{} {
+	if format == "txt" || format == "csv" {
+		return interface{}(data.ToSimpleProject(&project))
+	}
+	return interface{}(project)
 }

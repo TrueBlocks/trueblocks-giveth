@@ -38,23 +38,32 @@ func GetProjects() (projects []Project) {
 }
 
 type SimpleProject struct {
-	Address string `json:"address"`
-	GrantId string `json:"grantId"`
-	Name    string `json:"name"`
-	Tag     string `json:"tag"`
-	Active  bool   `json:"active"`
-	Core    bool   `json:"core"`
+	Address    string `json:"address"`
+	GrantId    string `json:"grantId"`
+	Name       string `json:"name"`
+	Tag        string `json:"tag"`
+	Active     bool   `json:"active"`
+	Core       bool   `json:"core"`
+	Categories string `json:"categories"`
 }
 
 func ToSimpleProject(p *Project) SimpleProject {
 	isCore := strings.HasPrefix(p.Id, "core-")
+	cats := ""
+	for _, c := range p.Categories {
+		if len(cats) > 0 {
+			cats += " "
+		}
+		cats += c.Name
+	}
 	return SimpleProject{
-		Address: p.WalletAddress,
-		GrantId: p.Id,
-		Name:    p.Title,
-		Tag:     "31-Projects:Giveth",
-		Active:  p.Listed,
-		Core:    isCore,
+		Address:    p.WalletAddress,
+		GrantId:    p.Id,
+		Name:       p.Title,
+		Tag:        "31-Projects:Giveth",
+		Active:     p.Listed,
+		Core:       isCore,
+		Categories: cats,
 	}
 }
 

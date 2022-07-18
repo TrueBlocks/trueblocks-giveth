@@ -10,9 +10,6 @@ import (
 )
 
 var cfgFile string
-var format string
-var remote bool
-var verbose bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -43,13 +40,20 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.giveth.yaml)")
-	rootCmd.PersistentFlags().StringVar(&format, "fmt", "", "one of [json|csv|txt]")
-	rootCmd.PersistentFlags().BoolVar(&remote, "remote", false, "if present, some commands will pull data from Giveth's APIs")
-	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "if present, some commands will display extra data")
+	rootCmd.PersistentFlags().MarkHidden("config")
+
+	rootCmd.PersistentFlags().Uint64P("round", "r", 0, "Limits the list of rounds to a single round")
+	rootCmd.PersistentFlags().BoolP("update", "u", false, "If present, data commands pull data from Giveth's APIs")
+	rootCmd.PersistentFlags().BoolP("script", "c", false, "If present, data commands generate bash script to query Giveth's APIs")
+	rootCmd.PersistentFlags().Uint64P("sleep", "s", 0, "Instructs the tool how long to sleep between invocations")
+	rootCmd.PersistentFlags().StringP("fmt", "x", "", "One of [json|csv|txt]")
+	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "If present, certain commands will display extra data")
+	rootCmd.PersistentFlags().SortFlags = false
+	rootCmd.Flags().SortFlags = false
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.

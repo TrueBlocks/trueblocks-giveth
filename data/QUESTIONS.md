@@ -23,3 +23,9 @@
 - Need to be able to download the project information
 
 - Is eligbile plus not-eligible all the transactions that went through the website?
+
+- If a project has two wallets in the address array, which one dominates in the walletAddress field?
+
+- What is the difference between walletAddress and adminUser.walletAddress?
+
+- Each of the three queries (eligible, not-eligible, and purpleToVerified) are identical (other than "info"). They should include a field called "type" to make combining the rows easier

@@ -1,6 +1,7 @@
+combine_all.sh
+test.sh
 get_all.sh
 x
-test
 *.csv
 *.txt
 *.xlsx

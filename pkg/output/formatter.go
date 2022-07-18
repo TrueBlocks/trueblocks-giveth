@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"log"
 	"reflect"
 	"strings"
 )
@@ -105,14 +104,15 @@ func GetFields(t *reflect.Type, format string, header bool) (fields []string, se
 
 	} else {
 		if (*t).Kind() != reflect.Struct {
-			log.Fatal((*t).Name() + " is not a structure")
-		}
-		for i := 0; i < (*t).NumField(); i++ {
-			fn := (*t).Field(i).Name
-			if header {
-				fields = append(fields, MakeFirstLowerCase(fn))
-			} else {
-				fields = append(fields, fn)
+			fields = append(fields, "")
+		} else {
+			for i := 0; i < (*t).NumField(); i++ {
+				fn := (*t).Field(i).Name
+				if header {
+					fields = append(fields, MakeFirstLowerCase(fn))
+				} else {
+					fields = append(fields, fn)
+				}
 			}
 		}
 	}
