@@ -1,11 +1,9 @@
 package data
 
 import (
-	"fmt"
-	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"os"
 )
 
 type Query struct {
@@ -15,9 +13,7 @@ type Query struct {
 	Fn    string
 }
 
-func (q *Query) Execute(w io.Writer) error {
-	log.Println("Retrieving: ", q.Url)
-
+func (q *Query) Execute() error {
 	response, err := http.Get(q.Url)
 	if err != nil {
 		return err
@@ -28,7 +24,12 @@ func (q *Query) Execute(w io.Writer) error {
 		return err
 	}
 
-	fmt.Fprintf(w, "%s", string(responseData))
+	f, err := os.Create(q.Fn)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	f.Write(responseData)
 
 	return nil
 }

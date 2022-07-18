@@ -29,3 +29,11 @@
 - What is the difference between walletAddress and adminUser.walletAddress?
 
 - Each of the three queries (eligible, not-eligible, and purpleToVerified) are identical (other than "info"). They should include a field called "type" to make combining the rows easier
+
+- the same txHash in two different files?
+jrush@web3:~/D/trueblocks-giveth|main⚡*➤ cat data/combined/all_donations.csv | cut -d, -f7 | sort | wc
+    9620    9620  663720
+jrush@web3:~/D/trueblocks-giveth|main⚡*➤ cat data/combined/all_donations.csv | cut -d, -f7 | sort -u | wc
+    9295    9295  641295
+
+- You should change the name from xDAI to gnosis

@@ -5,4 +5,7 @@ all:
 test:
 	@./test.sh
 
+images:
+	@cat R/counts.R | R --no-save
+
 .PHONY: all test clean

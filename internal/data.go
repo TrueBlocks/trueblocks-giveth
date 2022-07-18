@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -30,28 +30,22 @@ func RunData(cmd *cobra.Command, args []string) error {
 	}
 
 	for i, q := range queries {
+		var iFace interface{}
+		w := os.Stdout
+
 		if globals.Script {
 			fmt.Println("curl", "\""+q.Url+"\"", "--output", q.Fn, "; sleep", int(globals.Sleep))
 			continue
 		}
 
 		if globals.Update {
-			switch q.Cmd {
-			case "purple-list":
-				fallthrough
-			case "eligible":
-				fallthrough
-			case "not-eligible":
-				fallthrough
-			case "purple-verified":
-				var buf bytes.Buffer
-				q.Execute(&buf)
-			default:
-				q.Execute(os.Stdout)
+			log.Println("Updating: ", q.Fn)
+			q.Execute()
+			if !globals.Verbose {
+				goto PAUSE
 			}
 		}
 
-		var iFace interface{}
 		switch q.Cmd {
 		case "purple-list":
 			iFace, _ = data.NewPurpleList(q.Fn)
@@ -61,11 +55,12 @@ func RunData(cmd *cobra.Command, args []string) error {
 			fallthrough
 		case "purple-verified":
 			iFace, _ = data.NewDonations(q.Fn, globals.Format)
+		case "calc-givback":
+			iFace, _ = data.NewGivback(q.Fn, globals.Format)
 		default:
 			fmt.Println("I am here:", q.Cmd)
 		}
 
-		w := os.Stdout
 		if iFace != nil {
 			switch q.Cmd {
 			case "purple-list":
@@ -92,10 +87,23 @@ func RunData(cmd *cobra.Command, args []string) error {
 				for j, d := range iFace.([]data.Donation) {
 					output.Line(d, w, globals.Format, i == 0 && j == 0)
 				}
+			case "calc-givback":
+				if i == 0 {
+					output.Header(data.Givback{}, w, globals.Format)
+					defer output.Footer(data.Givback{}, w, globals.Format)
+				}
+				for j, d := range iFace.([]data.Givback) {
+					output.Line(d, w, globals.Format, i == 0 && j == 0)
+				}
 			}
 		}
 
-		if globals.Update && globals.Sleep > 0 {
+	PAUSE:
+		if globals.Update || globals.Sleep > 0 {
+			if globals.Sleep == 0 {
+				globals.Sleep = 2
+			}
+			log.Println("Sleeping for", int(globals.Sleep), "seconds")
 			time.Sleep(globals.Sleep * time.Second)
 		}
 	}
@@ -229,10 +237,6 @@ func getDataOptions(cmd *cobra.Command, args []string) (dataType string, globals
 func validate(dataType string, globals Globals) (err error) {
 	if dataType == "purple-list" {
 		return nil
-	}
-
-	if globals.Update && len(globals.Rounds) > 1 {
-		err = fmt.Errorf("you may only download a single round at a time")
 	}
 
 	return
