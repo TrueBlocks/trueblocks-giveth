@@ -31,9 +31,12 @@ func RunProjects(cmd *cobra.Command, args []string) error {
 
 	if categories {
 		cats := data.GetCategories()
-		sorted := []data.CategoryCounter{}
+		sorted := []data.StringCounter{}
 		for key, values := range cats {
-			sorted = append(sorted, data.NewCategoryCounter(key, len(values)))
+			sorted = append(sorted, data.StringCounter{
+				Key:   key,
+				Count: len(values),
+			})
 		}
 		sort.Slice(sorted, func(i, j int) bool {
 			if sorted[i].Count == sorted[j].Count {

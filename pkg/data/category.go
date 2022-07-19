@@ -10,16 +10,3 @@ func GetCategories() map[string][]string {
 	}
 	return cats
 }
-
-type StringCounter struct {
-	Key   string
-	Count int
-}
-
-type CategoryCounter struct {
-	StringCounter
-}
-
-func NewCategoryCounter(key string, count int) CategoryCounter {
-	return CategoryCounter{StringCounter: StringCounter{Key: key, Count: count}}
-}
