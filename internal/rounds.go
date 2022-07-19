@@ -35,7 +35,7 @@ func RunRounds(cmd *cobra.Command, args []string) error {
 
 // getRoundsOptions processes command line options for the Rounds command
 func getRoundsOptions(cmd *cobra.Command, args []string) (globals Globals, err error) {
-	return getGlobals("", cmd, args)
+	return GetGlobals("", cmd, args)
 }
 
 func toRoundInterface(round data.Round, format string) interface{} {

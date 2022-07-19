@@ -192,7 +192,7 @@ func isValidType(dataType string) bool {
 
 // getDataOptions processes command line options for the Rounds command
 func getDataOptions(cmd *cobra.Command, args []string) (dataType string, globals Globals, err error) {
-	globals, err = getGlobals("csv", cmd, args)
+	globals, err = GetGlobals("csv", cmd, args)
 	if err != nil {
 		return
 	}

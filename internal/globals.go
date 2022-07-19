@@ -18,7 +18,7 @@ type Globals struct {
 	Rounds  []data.Round
 }
 
-func getGlobals(defFmt string, cmd *cobra.Command, args []string) (ret Globals, err error) {
+func GetGlobals(defFmt string, cmd *cobra.Command, args []string) (ret Globals, err error) {
 	if !file.FolderExists("./data") {
 		err = fmt.Errorf("data folder not found in current working folder")
 		return

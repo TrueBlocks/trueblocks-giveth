@@ -98,7 +98,7 @@ func properTitle(input string) string {
 
 // getProjectsOptions processes command line options for the Rounds command
 func getProjectsOptions(cmd *cobra.Command, args []string) (projects []data.Project, categories bool, globals Globals, err error) {
-	globals, err = getGlobals("txt", cmd, args)
+	globals, err = GetGlobals("txt", cmd, args)
 	if err != nil {
 		return
 	}
