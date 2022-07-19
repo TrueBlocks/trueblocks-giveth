@@ -3,6 +3,7 @@ all:
 	@mv main ~/source/giveth
 
 test:
+	@echo Building...
 	@make all
 	@./test.sh
 
