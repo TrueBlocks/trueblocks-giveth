@@ -2,14 +2,15 @@ package data
 
 import (
 	"encoding/json"
-	"strconv"
 	"strings"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 )
 
 type Donation struct {
-	Amount       uint64  `json:"amount"`
+	Type         string  `json:"type"`
+	Round        string  `json:"round"`
+	Amount       float64 `json:"amount"`
 	Currency     string  `json:"currency"`
 	CreatedAt    string  `json:"createdAt"`
 	ValueUsd     float64 `json:"valueUsd"`
@@ -17,8 +18,8 @@ type Donation struct {
 	TxHash       string  `json:"txHash"`
 	Network      string  `json:"xDAI"`
 	Source       string  `json:"source"`
-	GiverName    string  `json:"giverName"`
-	GiverEmail   string  `json:"giverEmail"`
+	GiverName    string  `json:"giverName,omitempty"`
+	GiverEmail   string  `json:"giverEmail,omitempty"`
 	ProjectLink  string  `json:"projectlink"`
 }
 
@@ -38,20 +39,28 @@ func NewDonations(path string, format string) (donations []Donation, err error) 
 			}
 
 		} else {
-			amount, _ := strconv.ParseUint(record[header["amount"]], 10, 64)
-			valueUsd, _ := strconv.ParseFloat(record[header["valueUsd"]], 64)
+			gem := ""
+			if len(record) > header["giverEmail"] {
+				gem = record[header["giverEmail"]]
+			}
+			pl := ""
+			if len(record) > header["projectLink"] {
+				pl = record[header["projectLink"]]
+			}
 			donations = append(donations, Donation{
-				Amount:       amount,
+				Type:         record[header["type"]],
+				Round:        record[header["round"]],
+				Amount:       parseFloat(record[header["amount"]]),
 				Currency:     record[header["currency"]],
 				CreatedAt:    record[header["createdAt"]],
-				ValueUsd:     valueUsd,
+				ValueUsd:     parseFloat(record[header["valueUsd"]]),
 				GiverAddress: strings.ToLower(record[header["giverAddress"]]),
 				TxHash:       record[header["txHash"]],
 				Network:      record[header["network"]],
 				Source:       record[header["source"]],
 				GiverName:    record[header["giverName"]],
-				GiverEmail:   record[header["giverEmail"]],
-				ProjectLink:  record[header["projectLink"]],
+				GiverEmail:   gem,
+				ProjectLink:  pl,
 			})
 		}
 	}

@@ -68,7 +68,7 @@ func GetHeader(t *reflect.Type, format string) string {
 		if i > 0 {
 			sb.WriteString(sep)
 		}
-		sb.WriteString(quote + field + quote)
+		sb.WriteString(quote + field.Name + quote)
 	}
 	return sb.String()
 }
@@ -80,13 +80,22 @@ func GetRowTemplate(t *reflect.Type, format string) (*template.Template, error) 
 		if i > 0 {
 			sb.WriteString(sep)
 		}
-		sb.WriteString(quote + "{{." + field + "}}" + quote)
+		if field.Kind == reflect.String {
+			sb.WriteString(quote + "{{." + field.Name + "}}" + quote)
+		} else {
+			sb.WriteString("{{." + field.Name + "}}")
+		}
 	}
 	tt, err := template.New("").Parse(sb.String() + "\n")
 	return tt, err
 }
 
-func GetFields(t *reflect.Type, format string, header bool) (fields []string, sep string, quote string) {
+type Field struct {
+	Name string
+	Kind reflect.Kind
+}
+
+func GetFields(t *reflect.Type, format string, header bool) (fields []Field, sep string, quote string) {
 	sep = "\t"
 	quote = ""
 	if format == "csv" || strings.Contains(format, ",") {
@@ -100,18 +109,30 @@ func GetFields(t *reflect.Type, format string, header bool) (fields []string, se
 	if strings.Contains(format, "\t") || strings.Contains(format, ",") {
 		custom := strings.Replace(format, "\t", ",", -1)
 		custom = strings.Replace(custom, "\"", ",", -1)
-		fields = strings.Split(custom, ",")
+		names := strings.Split(custom, ",")
+		for _, name := range names {
+			fields = append(fields, Field{
+				Name: name,
+				Kind: reflect.String,
+			})
+		}
 
 	} else {
 		if (*t).Kind() != reflect.Struct {
-			fields = append(fields, "")
+			fields = append(fields, Field{})
 		} else {
 			for i := 0; i < (*t).NumField(); i++ {
-				fn := (*t).Field(i).Name
+				name := (*t).Field(i).Name
 				if header {
-					fields = append(fields, MakeFirstLowerCase(fn))
+					fields = append(fields, Field{
+						Name: MakeFirstLowerCase(name),
+						Kind: (*t).Field(i).Type.Kind(),
+					})
 				} else {
-					fields = append(fields, fn)
+					fields = append(fields, Field{
+						Name: name,
+						Kind: (*t).Field(i).Type.Kind(),
+					})
 				}
 			}
 		}

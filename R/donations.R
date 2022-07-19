@@ -4,7 +4,7 @@ library(ggplot2)
 
 setwd("/Users/jrush/Development/trueblocks-giveth/data/")
 cols <- c(rep("character",2),"numeric",rep("character",2),"numeric",rep("character",7))
-df <- read.table("combined/all_donations.csv", sep=",", quote="\"", header=TRUE, colClasses=cols)
+df <- read.table("summaries/all_donations.csv", sep=",", quote="\"", header=TRUE, colClasses=cols)
 head(df)
 
 #  filter(type=="eligible") %>%

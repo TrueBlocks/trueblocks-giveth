@@ -2,13 +2,15 @@ package data
 
 import (
 	"encoding/json"
-	"strconv"
+	"fmt"
 	"strings"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 )
 
 type Givback struct {
+	Type                   string  `json:"type"`
+	Round                  string  `json:"round"`
 	GivDistributed         float64 `json:"givDistributed"`
 	GivFactor              float64 `json:"givFactor"`
 	GivPrice               float64 `json:"givPrice"`
@@ -27,6 +29,8 @@ func (g Givback) String() string {
 }
 
 func NewGivback(path string, format string) (givbacks []Givback, err error) {
+	_, typ, _, round := ExplodeFilename(path)
+
 	header := make(map[string]int)
 	lines := file.AsciiFileToLines(path)
 	for _, line := range lines {
@@ -38,24 +42,21 @@ func NewGivback(path string, format string) (givbacks []Givback, err error) {
 
 		} else {
 			gb := Givback{
-				GivDistributed:         getFloat(record[header["givDistributed"]]),
-				GivFactor:              getFloat(record[header["givFactor"]]),
-				GivPrice:               getFloat(record[header["givPrice"]]),
-				GivbackUsdValue:        getFloat(record[header["givbackUsdValue"]]),
+				Type:                   typ,
+				Round:                  fmt.Sprintf("Round%02d", round),
+				GivDistributed:         parseFloat(record[header["givDistributed"]]),
+				GivFactor:              parseFloat(record[header["givFactor"]]),
+				GivPrice:               parseFloat(record[header["givPrice"]]),
+				GivbackUsdValue:        parseFloat(record[header["givbackUsdValue"]]),
 				GiverAddress:           record[header["giverAddress"]],
 				GiverEmail:             record[header["giverEmail"]],
 				GiverName:              record[header["giverName"]],
-				TotalDonationsUsdValue: getFloat(record[header["totalDonationsUsdValue"]]),
-				Givback:                getFloat(record[header["givback"]]),
-				Share:                  getFloat(record[header["share"]]),
+				TotalDonationsUsdValue: parseFloat(record[header["totalDonationsUsdValue"]]),
+				Givback:                parseFloat(record[header["givback"]]),
+				Share:                  parseFloat(record[header["share"]]),
 			}
 			givbacks = append(givbacks, gb)
 		}
 	}
 	return givbacks, nil
-}
-
-func getFloat(val string) float64 {
-	f, _ := strconv.ParseFloat(val, 64)
-	return f
 }

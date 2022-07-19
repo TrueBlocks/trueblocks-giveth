@@ -13,7 +13,7 @@ type Round struct {
 	StartDate gostradamus.DateTime
 	EndDate   gostradamus.DateTime
 	Available int
-	Price     string
+	Price     float64
 }
 
 func (r Round) String() string {
@@ -29,11 +29,11 @@ func (r Round) String() string {
 }
 
 type roundInternal struct {
-	Id        int    `json:"id"`
-	Start     string `json:"start"`
-	End       string `json:"end"`
-	Available int    `json:"available"`
-	Price     string `json:"price"` // need a string to preserve decimals
+	Id        int     `json:"id"`
+	Start     string  `json:"start"`
+	End       string  `json:"end"`
+	Available int     `json:"available"`
+	Price     float64 `json:"price"`
 }
 
 func GetRounds(filter, max int) (rounds []Round, err error) {
@@ -57,44 +57,44 @@ func GetRounds(filter, max int) (rounds []Round, err error) {
 type Params struct {
 	Id        int
 	Available int
-	Price     string
+	Price     float64
 }
 
 var params []Params
 
 func getParams(i int) Params {
 	if len(params) == 0 {
-		params = append(params, Params{Id: 0, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 1, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 2, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 3, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 4, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 5, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 6, Available: 1000000, Price: "0.39212738416853016"})
-		params = append(params, Params{Id: 7, Available: 1000000, Price: "0.365426065855812"})
-		params = append(params, Params{Id: 8, Available: 1000000, Price: "0.2919862076284853"})
-		params = append(params, Params{Id: 9, Available: 1000000, Price: "0.23137274115847087"})
-		params = append(params, Params{Id: 10, Available: 1000000, Price: "0.11634931201207897"})
-		params = append(params, Params{Id: 11, Available: 1000000, Price: "0.09879737529332695"})
-		params = append(params, Params{Id: 12, Available: 1000000, Price: "0.058188181877412634"})
-		params = append(params, Params{Id: 13, Available: 1000000, Price: "0.04916228394836191"})
-		params = append(params, Params{Id: 14, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 15, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 16, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 17, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 18, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 19, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 20, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 21, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 22, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 23, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 24, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 25, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 26, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 27, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 28, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 29, Available: 1000000, Price: "0.04"})
-		params = append(params, Params{Id: 30, Available: 1000000, Price: "0.04"})
+		params = append(params, Params{Id: 0, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 1, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 2, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 3, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 4, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 5, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 6, Available: 1000000, Price: 0.39212738416853016})
+		params = append(params, Params{Id: 7, Available: 1000000, Price: 0.365426065855812})
+		params = append(params, Params{Id: 8, Available: 1000000, Price: 0.2919862076284853})
+		params = append(params, Params{Id: 9, Available: 1000000, Price: 0.23137274115847087})
+		params = append(params, Params{Id: 10, Available: 1000000, Price: 0.11634931201207897})
+		params = append(params, Params{Id: 11, Available: 1000000, Price: 0.09879737529332695})
+		params = append(params, Params{Id: 12, Available: 1000000, Price: 0.058188181877412634})
+		params = append(params, Params{Id: 13, Available: 1000000, Price: 0.04916228394836191})
+		params = append(params, Params{Id: 14, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 15, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 16, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 17, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 18, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 19, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 20, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 21, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 22, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 23, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 24, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 25, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 26, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 27, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 28, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 29, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 30, Available: 1000000, Price: 0.04})
 	}
 
 	for _, p := range params {

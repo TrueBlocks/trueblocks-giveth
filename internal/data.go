@@ -99,7 +99,7 @@ func RunData(cmd *cobra.Command, args []string) error {
 		}
 
 	PAUSE:
-		if globals.Update || globals.Sleep > 0 {
+		if (globals.Update || globals.Sleep > 0) && len(queries) > 1 {
 			if globals.Sleep == 0 {
 				globals.Sleep = 2
 			}
@@ -141,14 +141,14 @@ func getUrl(cmd, format string, round data.Round) string {
 	}
 
 	if cmd == "calc-givback" {
-		url = strings.Replace(url, "[PRICE]", round.Price, -1)
+		url = strings.Replace(url, "[PRICE]", fmt.Sprintf("%g", round.Price), -1)
 		url = strings.Replace(url, "[AVAIL]", fmt.Sprintf("%d", round.Available), -1)
 		return url
 	}
 	return url
 }
 
-func getGivethFilename(cmd, format string, round data.Round) string {
+func getFilename(cmd, format string, round data.Round) string {
 	var opts = map[string]string{
 		"purple-list":     "[CMD]/[CMD].[FORMAT]",
 		"eligible":        "[CMD]/[CMD]-[SD]-[ED]-Round[RND].[FORMAT]",
@@ -168,7 +168,7 @@ func getGivethFilename(cmd, format string, round data.Round) string {
 }
 
 func getQuery(cmd, format string, round data.Round) data.Query {
-	return data.Query{Cmd: cmd, Url: getUrl(cmd, format, round), Fn: getGivethFilename(cmd, format, round)}
+	return data.Query{Cmd: cmd, Url: getUrl(cmd, format, round), Fn: getFilename(cmd, format, round)}
 }
 
 func DataTypes() []string {

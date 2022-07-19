@@ -22,7 +22,7 @@ func RunRounds(cmd *cobra.Command, args []string) error {
 
 	for i, round := range globals.Rounds {
 		if globals.Format == "" {
-			ff := "Round %d %s --> %s %d %s\n"
+			ff := "Round %d %s --> %s %d %g\n"
 			dateFmt := "YYYY-MM-DDTHH:mm:ss"
 			fmt.Printf(ff, round.Id, round.StartDate.Format(dateFmt), round.EndDate.Format(dateFmt), round.Available, round.Price)
 		} else {
