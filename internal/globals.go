@@ -54,6 +54,11 @@ func getGlobals(defFmt string, cmd *cobra.Command, args []string) (ret Globals, 
 		return
 	}
 	ret.Rounds, err = data.GetRounds(int(round), 25)
+	if ret.Update {
+		last := ret.Rounds[len(ret.Rounds)-1]
+		ret.Rounds = []data.Round{}
+		ret.Rounds = append(ret.Rounds, last)
+	}
 
 	return
 }

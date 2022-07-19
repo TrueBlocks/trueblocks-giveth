@@ -3,6 +3,7 @@ all:
 	@mv main ~/source/giveth
 
 test:
+	@make all
 	@./test.sh
 
 images:

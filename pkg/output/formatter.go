@@ -80,7 +80,7 @@ func GetRowTemplate(t *reflect.Type, format string) (*template.Template, error) 
 		if i > 0 {
 			sb.WriteString(sep)
 		}
-		if field.Kind == reflect.String {
+		if field.Kind == reflect.String || field.IsDate {
 			sb.WriteString(quote + "{{." + field.Name + "}}" + quote)
 		} else {
 			sb.WriteString("{{." + field.Name + "}}")
@@ -91,8 +91,9 @@ func GetRowTemplate(t *reflect.Type, format string) (*template.Template, error) 
 }
 
 type Field struct {
-	Name string
-	Kind reflect.Kind
+	Name   string
+	Kind   reflect.Kind
+	IsDate bool
 }
 
 func GetFields(t *reflect.Type, format string, header bool) (fields []Field, sep string, quote string) {
@@ -112,8 +113,9 @@ func GetFields(t *reflect.Type, format string, header bool) (fields []Field, sep
 		names := strings.Split(custom, ",")
 		for _, name := range names {
 			fields = append(fields, Field{
-				Name: name,
-				Kind: reflect.String,
+				Name:   name,
+				Kind:   reflect.String,
+				IsDate: strings.Contains(strings.ToLower(name), "date"),
 			})
 		}
 
@@ -125,13 +127,15 @@ func GetFields(t *reflect.Type, format string, header bool) (fields []Field, sep
 				name := (*t).Field(i).Name
 				if header {
 					fields = append(fields, Field{
-						Name: MakeFirstLowerCase(name),
-						Kind: (*t).Field(i).Type.Kind(),
+						Name:   MakeFirstLowerCase(name),
+						Kind:   (*t).Field(i).Type.Kind(),
+						IsDate: false,
 					})
 				} else {
 					fields = append(fields, Field{
-						Name: name,
-						Kind: (*t).Field(i).Type.Kind(),
+						Name:   name,
+						Kind:   (*t).Field(i).Type.Kind(),
+						IsDate: strings.Contains(strings.ToLower(name), "date"),
 					})
 				}
 			}

@@ -52,7 +52,9 @@ func (q *Query) Enhance() error {
 		for i, line := range lines {
 			if typ == "eligible" || typ == "not-eligible" || typ == "purple-verified" {
 				parts := strings.Split(line, ",")
-				line = strings.Join(parts[0:11], ",")
+				if len(parts) >= 12 {
+					line = strings.Join(parts[0:11], ",")
+				}
 			}
 			var l string
 			if i == 0 {
@@ -66,6 +68,12 @@ func (q *Query) Enhance() error {
 					break
 				}
 				l = strings.Replace(l, ",,", ",\"\",", -1)
+			}
+			for {
+				if strings.Count(l, ",") >= 12 {
+					break
+				}
+				l = l + ",\"\""
 			}
 			l += "\n"
 			out.Write([]byte(l))

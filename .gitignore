@@ -1,11 +1,14 @@
-.Rhistory
 test.sh
-get_all.sh
+update_all.sh
 x
 *.csv
 *.txt
 *.xlsx
 *.json
+
+.Rdata
+.Rhistory
+Rplots.pdf
 
 .DS_Store
 

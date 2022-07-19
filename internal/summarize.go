@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -23,21 +24,21 @@ func RunSummarize(cmd *cobra.Command, args []string) error {
 }
 
 func summarizeGivbacks() error {
-	//donations, _ := data.NewDonations("./data/summaries/all_donations.csv", "csv")
+	donations, _ := data.NewDonations("./data/summaries/all_donations.csv", "csv")
 
-	//addrMap := map[string]map[string]int{}
-	//for _, donation := range donations {
-	//	if addrMap["1"] == nil {
-	//		addrMap["1"] = map[string]int{}
-	//	}
-	//	addrMap["1"][donation.GiverAddress]++
-	//}
+	addrMap := map[string]map[string]int{}
+	for _, donation := range donations {
+		if addrMap["1"] == nil {
+			addrMap["1"] = map[string]int{}
+		}
+		addrMap["1"][donation.GiverAddress]++
+	}
 
-	//for round, m := range addrMap {
-	//	for addr, cnt := range m {
-	//		fmt.Println(round, addr, cnt)
-	//	}
-	//}
+	for round, m := range addrMap {
+		for addr, cnt := range m {
+			fmt.Println(round, addr, cnt)
+		}
+	}
 
 	return nil
 }
