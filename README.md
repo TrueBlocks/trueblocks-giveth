@@ -8,11 +8,9 @@ Usage:
 
 Available Commands:
   data        Various routines to download and manipulate the data
-  help        Help about any command
   projects    Produces data related to the projects including addresses.tsv
   rounds      Print information about the rounds
   summarize   Summarizes and combines data by type and time period (i.e. rounds)
-  summary     Provide statisical information about the data
 
 Flags:
   -r, --round uint   Limits the list of rounds to a single round
