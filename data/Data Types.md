@@ -10,7 +10,6 @@ type Donation struct {
 	float64 valueUsd
 	string  giverAddress
 	string  txHash
-	string  xDAI
 	string  source
 	string  giverName,omitempty
 	string  giverEmail,omitempty
