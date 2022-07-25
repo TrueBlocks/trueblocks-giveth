@@ -1,6 +1,7 @@
 all:
 	@go build main.go
-	@mv main ~/source/giveth
+	@mv bin
+	@mv main ~/bin/giveth
 
 test:
 	@echo Building...
