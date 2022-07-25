@@ -23,3 +23,7 @@ Flags:
 
 Use "giveth [command] --help" for more information about a command.
 ```
+
+## The Review Process
+
+![image](https://user-images.githubusercontent.com/5417918/180751873-57d86b2c-fde9-4f6d-8e87-5e1795bbe24a.png)
