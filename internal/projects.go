@@ -76,6 +76,7 @@ func markCore(p *data.Project) {
 	cores["0x900db999074d9277c5da2a43f252d74366230da0"] = true
 	cores["0xecb179ea5910d652eda6988e919c7930f5ffcf11"] = true
 	cores["0xf924ff0f192f0c7c073161e0d62ce7635114e74f"] = true
+	cores["0x6e8873085530406995170da467010565968c7c62"] = true
 	if cores[p.WalletAddress] {
 		id, _ := strconv.Atoi(p.Id)
 		p.Id = fmt.Sprintf("core-%04d", id)
