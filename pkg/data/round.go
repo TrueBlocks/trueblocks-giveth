@@ -78,7 +78,7 @@ func getParams(i int) Params {
 		params = append(params, Params{Id: 11, Available: 1000000, Price: 0.09879737529332695})
 		params = append(params, Params{Id: 12, Available: 1000000, Price: 0.058188181877412634})
 		params = append(params, Params{Id: 13, Available: 1000000, Price: 0.04916228394836191})
-		params = append(params, Params{Id: 14, Available: 1000000, Price: 0.04})
+		params = append(params, Params{Id: 14, Available: 1000000, Price: 0.058925060751612926})
 		params = append(params, Params{Id: 15, Available: 1000000, Price: 0.04})
 		params = append(params, Params{Id: 16, Available: 1000000, Price: 0.04})
 		params = append(params, Params{Id: 17, Available: 1000000, Price: 0.04})
