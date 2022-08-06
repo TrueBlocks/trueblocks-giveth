@@ -19,14 +19,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
 	// dataCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
 	types := internal.DataTypes()
 	opts := "["
 	for i, t := range types {
@@ -38,6 +31,5 @@ func init() {
 	opts += "]"
 	dataCmd.Flags().StringP("data", "d", "", "One of "+opts)
 	dataCmd.Flags().SortFlags = false
-
 	rootCmd.AddCommand(dataCmd)
 }
