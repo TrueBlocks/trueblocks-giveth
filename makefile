@@ -1,10 +1,9 @@
 all:
-	@echo building...
+	@echo Building...
 	@go build main.go
 	@mv main ~/source/giveth
 
 test:
-	@echo Building...
 	@make all
 	@./test.sh
 

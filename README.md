@@ -53,6 +53,12 @@ These instructions assume you can navigate the command line and edit configurati
 ```shell
 make test
 ```
+## The API endpoint
+
+```
+curl -X 'GET' 'https://givback.develop.giveth.io/purpleList' -H 'accept: application/json'
+```
+
 ## The Review Process
 
 ![image](https://user-images.githubusercontent.com/5417918/180751873-57d86b2c-fde9-4f6d-8e87-5e1795bbe24a.png)

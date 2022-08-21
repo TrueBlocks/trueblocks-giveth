@@ -9,12 +9,8 @@ import (
 var summarizeCmd = &cobra.Command{
 	Use:   "summarize",
 	Short: "Summarizes and combines data by type and time period (i.e. rounds)",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `This tool begins the process of combining, summarizing and simplifying
+data gathered from both the Giveth API and on-chain data.`,
 	RunE: summarize.RunSummarize,
 }
 
