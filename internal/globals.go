@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
@@ -19,11 +20,15 @@ type Globals struct {
 }
 
 func GetGlobals(defFmt string, cmd *cobra.Command, args []string) (ret Globals, err error) {
-	if !file.FolderExists("./data") {
-		err = fmt.Errorf("data folder not found in current working folder")
+	if !file.FolderExists(data.DataFolder()) {
+		err = fmt.Errorf("data folder (%s) not found in current working folder", data.DataFolder())
 		return
 	}
 
+	envFmt := os.Getenv("TB_DEFAULT_FMT")
+	if len(envFmt) > 0 {
+		defFmt = envFmt
+	}
 	if ret.Format, err = cmd.Flags().GetString("fmt"); err != nil {
 		return
 	}

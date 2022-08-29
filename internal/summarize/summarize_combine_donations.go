@@ -17,7 +17,7 @@ func combineDonations() error {
 
 	files := data.GetFilesInFolders(folders)
 
-	out, err := os.Create("./data/summaries/all_donations.csv")
+	out, err := os.Create(data.DataFolder() + "summaries/all_donations.csv")
 	if err != nil {
 		return err
 	}

@@ -36,7 +36,7 @@ func summarizeByAddress(cmd *cobra.Command, args []string) (err error) {
 		})
 	}
 
-	return data.WriteSummary("./data/summaries/donation_count_by_address.csv", results, data.Reverse, globals.Format)
+	return data.WriteSummary(data.DataFolder()+"summaries/donation_count_by_address.csv", results, data.Reverse, globals.Format)
 }
 
 func summarizeByAddressByRound(cmd *cobra.Command, args []string) (err error) {
@@ -65,5 +65,5 @@ func summarizeByAddressByRound(cmd *cobra.Command, args []string) (err error) {
 		}
 	}
 
-	return data.WriteSummary("./data/summaries/donation_count_by_address_by_round.csv", results, data.Reverse, globals.Format)
+	return data.WriteSummary(data.DataFolder()+"summaries/donation_count_by_address_by_round.csv", results, data.Reverse, globals.Format)
 }

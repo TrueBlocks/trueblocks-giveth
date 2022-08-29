@@ -4,47 +4,65 @@ import (
 	"encoding/json"
 	"log"
 
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/cache"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/tslib"
 	"github.com/TrueBlocks/trueblocks-giveth/pkg/utils"
 	"github.com/bykof/gostradamus"
 )
 
 type Round struct {
-	Id        int
-	StartDate gostradamus.DateTime
-	EndDate   gostradamus.DateTime
-	Available int
-	Price     float64
+	Id           int
+	StartDate    gostradamus.DateTime
+	EndDate      gostradamus.DateTime
+	GnosisRange  cache.FileRange
+	MainnetRange cache.FileRange
+	Available    int
+	Price        float64
 }
 
 func (r Round) String() string {
 	rr := roundInternal{
-		Id:        r.Id,
-		Start:     r.StartDate.Format("YYYY-MM-DDTHH:mm:ss"),
-		End:       r.EndDate.Format("YYYY-MM-DDTHH:mm:ss"),
-		Available: r.Available,
-		Price:     r.Price,
+		Id:           r.Id,
+		Start:        r.StartDate.Format("YYYY-MM-DDTHH:mm:ss"),
+		End:          r.EndDate.Format("YYYY-MM-DDTHH:mm:ss"),
+		GnosisRange:  r.GnosisRange,
+		MainnetRange: r.MainnetRange,
+		Available:    r.Available,
+		Price:        r.Price,
 	}
 	b, _ := json.MarshalIndent(rr, "", "  ")
 	return string(b)
 }
 
 type roundInternal struct {
-	Id        int     `json:"id"`
-	Start     string  `json:"start"`
-	End       string  `json:"end"`
-	Available int     `json:"available"`
-	Price     float64 `json:"price"`
+	Id           int             `json:"id"`
+	Start        string          `json:"start"`
+	End          string          `json:"end"`
+	GnosisRange  cache.FileRange `json:"gnosisRange"`
+	MainnetRange cache.FileRange `json:"mainnetRange"`
+	Available    int             `json:"available"`
+	Price        float64         `json:"price"`
 }
 
 func GetRounds(filter, max int) (rounds []Round, err error) {
 	for i := 1; i <= max; i++ {
 		if filter == 0 || filter == i {
+			startDate := utils.NewDateTime(2021, 12, 10+(14*i), 16, 0, 0)
+			endDate := utils.NewDateTime(2021, 12, 10+(14*(i+1)), 16, 0, -1)
+			gRange := cache.FileRange{}
+			gRange.First, _ = tslib.FromTsToBn("gnosis", uint64(startDate.UnixTimestamp()))
+			gRange.Last, _ = tslib.FromTsToBn("gnosis", uint64(endDate.UnixTimestamp()))
+			mRange := cache.FileRange{}
+			mRange.First, _ = tslib.FromTsToBn("mainnet", uint64(startDate.UnixTimestamp()))
+			mRange.Last, _ = tslib.FromTsToBn("mainnet", uint64(endDate.UnixTimestamp()))
 			round := Round{
-				Id:        i,
-				StartDate: utils.NewDateTime(2021, 12, 10+(14*i), 16, 0, 0),
-				EndDate:   utils.NewDateTime(2021, 12, 10+(14*(i+1)), 16, 0, -1),
-				Available: getParams(i).Available,
-				Price:     getParams(i).Price,
+				Id:           i,
+				StartDate:    startDate,
+				EndDate:      endDate,
+				GnosisRange:  gRange,
+				MainnetRange: mRange,
+				Available:    getParams(i).Available,
+				Price:        getParams(i).Price,
 			}
 			if round.StartDate.Time().Before(gostradamus.Now().Time()) {
 				rounds = append(rounds, round)

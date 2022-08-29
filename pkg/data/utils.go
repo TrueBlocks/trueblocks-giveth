@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 	"github.com/bykof/gostradamus"
 )
 
@@ -40,7 +41,7 @@ func ParseDate(s string) (ret gostradamus.DateTime) {
 func GetFilesInFolders(folders []string) (files []string) {
 	for _, folder := range folders {
 		log.Println("Walking", folder)
-		filepath.Walk("./data/"+folder, func(path string, info fs.FileInfo, err error) error {
+		filepath.Walk(DataFolder()+folder, func(path string, info fs.FileInfo, err error) error {
 			if strings.HasSuffix(path, ".csv") {
 				files = append(files, path)
 			}
@@ -91,4 +92,11 @@ func ExplodeFilename(path string) (fn, typ, fmt string, round int64) {
 	// ed = ParseDate(parts[2])
 	typ = folderCmdMap[fn]
 	return
+}
+
+func DataFolder() string {
+	if file.FolderExists("./data") {
+		return "./data/"
+	}
+	return "/Users/jrush/Development/trueblocks-giveth/data/"
 }

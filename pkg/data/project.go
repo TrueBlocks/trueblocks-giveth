@@ -12,7 +12,7 @@ import (
 )
 
 func GetProjects() (projects []Project) {
-	filepath.Walk("./data/raw/", func(path string, info fs.FileInfo, err error) error {
+	filepath.Walk(DataFolder()+"raw/", func(path string, info fs.FileInfo, err error) error {
 		if strings.HasSuffix(path, ".json") {
 			fp, err := os.Open(path)
 			if err != nil {

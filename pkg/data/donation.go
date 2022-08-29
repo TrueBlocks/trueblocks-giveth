@@ -16,7 +16,7 @@ type Donation struct {
 	ValueUsd     float64 `json:"valueUsd"`
 	GiverAddress string  `json:"giverAddress"`
 	TxHash       string  `json:"txHash"`
-	Network      string  `json:"xDAI"`
+	Network      string  `json:"network"`
 	Source       string  `json:"source"`
 	GiverName    string  `json:"giverName,omitempty"`
 	GiverEmail   string  `json:"giverEmail,omitempty"`
@@ -47,7 +47,7 @@ func NewDonations(path string, format string) (donations []Donation, err error) 
 			if len(record) > header["projectLink"] {
 				pl = record[header["projectLink"]]
 			}
-			donations = append(donations, Donation{
+			donation := Donation{
 				Type:         record[header["type"]],
 				Round:        record[header["round"]],
 				Amount:       parseFloat(record[header["amount"]]),
@@ -61,7 +61,8 @@ func NewDonations(path string, format string) (donations []Donation, err error) 
 				GiverName:    record[header["giverName"]],
 				GiverEmail:   gem,
 				ProjectLink:  pl,
-			})
+			}
+			donations = append(donations, donation)
 		}
 	}
 

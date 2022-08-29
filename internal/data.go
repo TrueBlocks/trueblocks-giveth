@@ -157,7 +157,7 @@ func getFilename(cmd, format string, round data.Round) string {
 		"calc-givback":    "[CMD]/[CMD]-[SD]-[ED]-Round[RND].[FORMAT]",
 	}
 
-	fn := "data/" + opts[cmd]
+	fn := data.DataFolder() + opts[cmd]
 	fn = strings.Replace(fn, "[CMD]", cmds[cmd], -1)
 	fn = strings.Replace(fn, "[SD]", utils.GetGivethDate(round.StartDate), -1)
 	fn = strings.Replace(fn, "[ED]", utils.GetGivethDate(round.EndDate), -1)

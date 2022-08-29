@@ -11,7 +11,7 @@ import (
 func combineGivbacks() error {
 	files := data.GetFilesInFolders([]string{"calculate-givback"})
 
-	out, err := os.Create("./data/summaries/all_givbacks.csv")
+	out, err := os.Create(data.DataFolder() + "summaries/all_givbacks.csv")
 	if err != nil {
 		return err
 	}
