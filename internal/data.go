@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/TrueBlocks/trueblocks-giveth/pkg/data"
-	"github.com/TrueBlocks/trueblocks-giveth/pkg/output"
 	"github.com/TrueBlocks/trueblocks-giveth/pkg/utils"
 	"github.com/spf13/cobra"
 )
@@ -29,83 +28,25 @@ func RunData(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	for i, q := range queries {
-		var iFace interface{}
-		w := os.Stdout
-
-		if globals.Script {
-			fmt.Println("curl", "\""+q.Url+"\"", "--output", q.Fn, "; sleep", int(globals.Sleep))
-			continue
+	if globals.Script {
+		for _, q := range queries {
+			fmt.Fprintln(os.Stdout, "curl", "\""+q.Url+"\"", "--output", q.Fn, "; sleep", int(globals.Sleep))
 		}
-
-		if globals.Update {
-			log.Println("Updating: ", q.Fn)
-			q.Execute()
-			if !globals.Verbose {
-				goto PAUSE
-			}
-		}
-
-		switch q.Cmd {
-		case "purple-list":
-			iFace, _ = data.NewPurpleList(q.Fn)
-		case "eligible":
-			fallthrough
-		case "not-eligible":
-			fallthrough
-		case "purple-verified":
-			iFace, _ = data.NewDonations(q.Fn, globals.Format)
-		case "calc-givback":
-			iFace, _ = data.NewGivback(q.Fn, globals.Format)
-		default:
-			fmt.Println("I am here:", q.Cmd)
-		}
-
-		if iFace != nil {
-			switch q.Cmd {
-			case "purple-list":
-				if i == 0 {
-					output.Header(data.PurpleList{}, w, globals.Format)
-					defer output.Footer(data.PurpleList{}, w, globals.Format)
-				}
-				if globals.Format == "txt" || globals.Format == "csv" {
-					for j, p := range iFace.(data.PurpleList).List {
-						output.Line(p, w, globals.Format, i == 0 && j == 0)
+	} else {
+		for _, q := range queries {
+			if globals.Update {
+				log.Println("Updating: ", q.Fn)
+				q.Execute()
+				if !globals.Verbose {
+					if globals.Sleep == 0 {
+						globals.Sleep = 2
 					}
-				} else {
-					output.Line(iFace, w, globals.Format, true)
-				}
-			case "eligible":
-				fallthrough
-			case "not-eligible":
-				fallthrough
-			case "purple-verified":
-				if i == 0 {
-					output.Header(data.Donation{}, w, globals.Format)
-					defer output.Footer(data.Donation{}, w, globals.Format)
-				}
-				for j, d := range iFace.([]data.Donation) {
-					output.Line(d, w, globals.Format, i == 0 && j == 0)
-				}
-			case "calc-givback":
-				if i == 0 {
-					output.Header(data.Givback{}, w, globals.Format)
-					defer output.Footer(data.Givback{}, w, globals.Format)
-				}
-				for j, d := range iFace.([]data.Givback) {
-					output.Line(d, w, globals.Format, i == 0 && j == 0)
+					log.Println("Sleeping for", globals.Sleep, "seconds")
+					time.Sleep(globals.Sleep * time.Second)
 				}
 			}
 		}
-
-	PAUSE:
-		if (globals.Update || globals.Sleep > 0) && len(queries) > 1 {
-			if globals.Sleep == 0 {
-				globals.Sleep = 2
-			}
-			log.Println("Sleeping for", int(globals.Sleep), "seconds")
-			time.Sleep(globals.Sleep * time.Second)
-		}
+		data.RenderQueries(globals.Format, os.Stdout, queries)
 	}
 
 	return nil

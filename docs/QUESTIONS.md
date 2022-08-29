@@ -1,5 +1,5 @@
+Our proposal: https://forum.giveth.io/t/proposal-monitoring-tool-to-help-identify-and-mitigate-recirculating-givbacks/405/16
 THE API: https://givback.develop.giveth.io/api-docs
-
 
 - Can we get some data scientists involved?
 
