@@ -56,7 +56,7 @@ func NewDonations(path string, format string) (donations []Donation, err error) 
 				ValueUsd:     parseFloat(record[header["valueUsd"]]),
 				GiverAddress: strings.ToLower(record[header["giverAddress"]]),
 				TxHash:       record[header["txHash"]],
-				Network:      record[header["network"]],
+				Network:      strings.Replace(record[header["network"]], "xDAI", "gnosis", -1),
 				Source:       record[header["source"]],
 				GiverName:    record[header["giverName"]],
 				GiverEmail:   gem,

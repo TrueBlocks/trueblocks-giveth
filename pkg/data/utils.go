@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 	"github.com/bykof/gostradamus"
 )
 
@@ -95,8 +94,5 @@ func ExplodeFilename(path string) (fn, typ, fmt string, round int64) {
 }
 
 func DataFolder() string {
-	if file.FolderExists("./data") {
-		return "./data/"
-	}
 	return "/Users/jrush/Development/trueblocks-giveth/data/"
 }

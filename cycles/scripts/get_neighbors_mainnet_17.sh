@@ -1,5 +1,0 @@
-./scripts/get_neighbors.sh mainnet 17 0x4fb34207783bfa61667ca75db90a2f88b049a978
-./scripts/get_neighbors.sh mainnet 17 0x7b2e78d4dfaaba045a167a70da285e30e8fca196
-./scripts/get_neighbors.sh mainnet 17 0x7d547666209755fb833f9b37eebea38ebf513abb
-./scripts/get_neighbors.sh mainnet 17 0xb61f3f0c44ca6405912e5ce43e7c3865673d738e
-./scripts/get_neighbors.sh mainnet 17 0xf7253a0e87e39d2cd6365919d4a3d56d431d0041

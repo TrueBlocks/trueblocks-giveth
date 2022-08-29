@@ -7,7 +7,7 @@ import (
 	"github.com/TrueBlocks/trueblocks-giveth/pkg/output"
 )
 
-func getDataFromCmd(cmd, fn, fmt string) interface{} {
+func GetDataFromCmd(cmd, fn, fmt string) interface{} {
 	var iFace interface{}
 	switch cmd {
 	case "purple-list":
@@ -28,7 +28,7 @@ func getDataFromCmd(cmd, fn, fmt string) interface{} {
 
 func RenderQueries(fmt string, w io.Writer, queries []Query) {
 	for i, q := range queries {
-		iFace := getDataFromCmd(q.Cmd, q.Fn, fmt)
+		iFace := GetDataFromCmd(q.Cmd, q.Fn, fmt)
 		if iFace != nil {
 			switch q.Cmd {
 			case "purple-list":
