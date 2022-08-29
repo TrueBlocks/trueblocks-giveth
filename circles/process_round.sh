@@ -96,7 +96,7 @@ cat $MAINNET_DONOR | sed 's/^/.\/scripts\/get_neighbors.sh mainnet '$ROUND' /'  
 #------------------------------------
 # Create the neighbors files
 #------------------------------------
-FIRST=13858106 source $GNOSIS_SCRIPT
+FIRST=19719093 source $GNOSIS_SCRIPT
 FIRST=13858106 source $MAINNET_SCRIPT
 
 head $DIR/results/gnosis/*counts* | tee $DIR/stats/gnosis.txt

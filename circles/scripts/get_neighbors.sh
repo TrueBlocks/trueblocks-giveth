@@ -32,7 +32,7 @@ echo $DEST3
 echo $DEST4
 #exit
 
-chifra export --cache --neighbors --first_block $FIRST $ADDR | tee $DEST1
+chifra export --chain $CHAIN --cache --neighbors --first_block $FIRST $ADDR | tee $DEST1
 cat $DEST1 | grep from | grep -v $ADDR | tee $DEST2
 cat $DEST2 | cut -f3 | sort | uniq -c | sort -n | tee $DEST3
 cat $DEST2 | cut -f3 | sort -u | tee $DEST4
