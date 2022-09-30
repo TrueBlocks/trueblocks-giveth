@@ -63,3 +63,22 @@ curl -X 'GET' 'https://givback.develop.giveth.io/purpleList' -H 'accept: applica
 
 ![image](https://user-images.githubusercontent.com/5417918/180751873-57d86b2c-fde9-4f6d-8e87-5e1795bbe24a.png)
 
+## Contributing
+
+We love contributors. Please see information about our [work flow](https://github.com/TrueBlocks/trueblocks-core/blob/master/docs/BRANCHING.md) before proceeding.
+
+1. Fork this repository into your own repo.
+2. Create a branch: `git checkout -b <branch_name>`.
+3. Make changes to your local branch and commit them to your forked repo: `git commit -m '<commit_message>'`
+4. Push back to the original branch: `git push origin TrueBlocks/trueblocks-core`
+5. Create the pull request.
+
+## List of Contributors
+
+Thanks to the following people who have contributed to this project:
+
+* [@tjayrush](https://github.com/tjayrush)
+
+## Contact
+
+If you have questions, comments, or complaints, please join the discussion on our discord server which is [linked from our website](https://trueblocks.io).
