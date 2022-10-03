@@ -2,8 +2,8 @@ package data
 
 import (
 	"encoding/json"
+	"io"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,7 +19,7 @@ func GetProjects() (projects []Project) {
 				return err
 			}
 			defer fp.Close()
-			b, _ := ioutil.ReadAll(fp)
+			b, _ := io.ReadAll(fp)
 			w := Wrapper{}
 			json.Unmarshal(b, &w)
 			p := w.Data.Project

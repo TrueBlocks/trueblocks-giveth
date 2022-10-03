@@ -2,7 +2,7 @@ package data
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -23,7 +23,7 @@ func (q *Query) Execute() error {
 		return err
 	}
 
-	responseData, err := ioutil.ReadAll(response.Body)
+	responseData, err := io.ReadAll(response.Body)
 	if err != nil {
 		return err
 	}

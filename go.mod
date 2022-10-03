@@ -11,10 +11,12 @@ require (
 )
 
 require (
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/alecthomas/participle/v2 v2.0.0-alpha7 // indirect
-	github.com/btcsuite/btcd v0.22.0-beta // indirect
+	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
-	github.com/ethereum/go-ethereum v1.10.16 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
+	github.com/ethereum/go-ethereum v1.10.25 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
@@ -40,7 +42,7 @@ require (
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 replace github.com/TrueBlocks/trueblocks-core/src/apps/chifra => /Users/jrush/Development/trueblocks-core/src/apps/chifra

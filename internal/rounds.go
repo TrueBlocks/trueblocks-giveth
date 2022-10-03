@@ -22,6 +22,7 @@ func RunRounds(cmd *cobra.Command, args []string) error {
 	for i, round := range globals.Rounds {
 		output.Line(round, os.Stdout, globals.Format, i == 0)
 	}
+
 	return nil
 }
 
