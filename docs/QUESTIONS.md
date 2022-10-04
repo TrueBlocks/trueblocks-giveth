@@ -22,6 +22,10 @@ THE API: https://givback.develop.giveth.io/api-docs
 
 - When I query against the not-eligible-donations and eligible-donations endpoints, I do not get the project's address or id. This makes it very difficult to join data files
 
+- When I query against the purple list, all I get are addresses. I need address and the associated projects
+
+- I don't think there's a very good connection to project id in the spreadsheets.
+
 ### Quotes and Links from Giveth.io Website
 
 - I need a clear idea of why some transactions are eligible and some are not.
@@ -36,6 +40,7 @@ THE API: https://givback.develop.giveth.io/api-docs
 - If I run the same query with identical parameters, I get different results. Simple fix -- add one additional field to the sort of the results: txhash
 
 - The "process" cares about Rounds -- the API interface forces users to enter date ranges
+
 ### Questions In General
 
 - You should change the name from xDAI to gnosis
