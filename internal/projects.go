@@ -25,6 +25,7 @@ func RunProjects(cmd *cobra.Command, args []string) error {
 		var url string = `curl --location --request POST 'https://mainnet.serve.giveth.io/graphql' --header 'Content-Type: application/json' --data-raw '{"query":"{projectById(id:%d) {id, title, balance, image, slug, slugHistory, creationDate, updatedAt, admin, description, walletAddress, impactLocation, qualityScore, verified, traceCampaignId, listed, givingBlocksId, status { id, symbol, name, description }, categories { name }, reaction { id }, adminUser { id, email, firstName, walletAddress }, organization { name, label, supportCustomTokens }, addresses {address, isRecipient, networkId }, totalReactions, totalDonations, totalTraceDonations}}","variables":{}}' | jq >data/raw/%05d.json; sleep 4`
 		for i := 1; i < int(float64(len(projects))*1.3); i++ {
 			fmt.Printf(strings.Replace(url, "\n", " ", -1)+"\n", i, i)
+			fmt.Println()
 		}
 		return nil
 	}
@@ -71,7 +72,7 @@ func RunProjects(cmd *cobra.Command, args []string) error {
 }
 
 func markCore(p *data.Project) {
-	cores := make(map[string]bool, 4)
+	cores := make(map[string]bool, 5)
 	cores["0x4d9339dd97db55e3b9bcbe65de39ff9c04d1c2cd"] = true
 	cores["0x900db999074d9277c5da2a43f252d74366230da0"] = true
 	cores["0xecb179ea5910d652eda6988e919c7930f5ffcf11"] = true

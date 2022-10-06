@@ -8,7 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/names"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/validate"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func GetProjects() (projects []Project) {
@@ -47,6 +49,21 @@ type SimpleProject struct {
 	Categories string `json:"categories"`
 }
 
+var namesMap *names.NamesMap
+
+func GetChifraName(addrIn string) (*names.Name, error) {
+	if namesMap == nil {
+		nM, err := names.LoadNamesMap("mainnet")
+		if err != nil {
+			return nil, err
+		}
+		namesMap = &nM
+	}
+	a := common.HexToAddress(addrIn)
+	name := (*namesMap)[a]
+	return &name, nil
+}
+
 func ToSimpleProject(p *Project) SimpleProject {
 	isCore := strings.HasPrefix(p.Id, "core-")
 	cats := ""
@@ -56,6 +73,7 @@ func ToSimpleProject(p *Project) SimpleProject {
 		}
 		cats += c.Name
 	}
+
 	return SimpleProject{
 		Address:    p.WalletAddress,
 		GrantId:    p.Id,
