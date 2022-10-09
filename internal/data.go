@@ -153,7 +153,7 @@ func getDataOptions(cmd *cobra.Command, args []string) (dataType string, globals
 	if len(dataType) > 0 {
 		// we got one, check if it's valid. If yes, we're done
 		if isValidType(dataType) {
-			err = validate(dataType, globals)
+			err = validateData(dataType, globals)
 			return
 		}
 	}
@@ -161,7 +161,7 @@ func getDataOptions(cmd *cobra.Command, args []string) (dataType string, globals
 	for _, arg := range args {
 		if isValidType(arg) {
 			dataType = arg
-			err = validate(dataType, globals)
+			err = validateData(dataType, globals)
 			return
 		}
 	}
@@ -175,7 +175,7 @@ func getDataOptions(cmd *cobra.Command, args []string) (dataType string, globals
 	return
 }
 
-func validate(dataType string, globals Globals) (err error) {
+func validateData(dataType string, globals Globals) (err error) {
 	if dataType == "purple-list" {
 		return nil
 	}
