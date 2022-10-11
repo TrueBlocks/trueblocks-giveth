@@ -2,9 +2,7 @@ package internal
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 
@@ -17,108 +15,58 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func findSourceOfFunds(w *os.File, i int, hash, chain string) {
-	if !isValidHash(hash) {
-		// ignore header
-		return
-	}
-
-	fmt.Fprintln(w, "\n", colors.BrightBlack+strings.Repeat("-", 5), fmt.Sprintf("%d.", i), hash, chain, strings.Repeat("-", 70), colors.Off)
+func FindSourceOfFunds(w *os.File, place string, depth int, hash, chain string) {
+	// let them know we're here
+	fmt.Fprintln(w, "\n", colors.BrightBlack+strings.Repeat("-", 5), place, hash, chain, strings.Repeat("-", 70), colors.Off)
 
 	// get the transaction we're interested in
 	callParams := map[string]string{"chain": chain, "hash": hash}
 	tx := chifra.TransactionsCommand(w, callParams, noFunc, transFunc)
 
 	// if there's too many records, we bail out
-	nRecords := chifra.ListCountCommand(w, chain, tx.Sender, nil, postListCount)
+	nRecords := chifra.ListCountCommand(w, chain, tx.Sender, nil, postListFunc)
 	if nRecords > 20000 {
 		fmt.Fprintln(os.Stderr, colors.Yellow, "Skipping address", tx.Sender, "too many records:", nRecords, colors.Off)
 
 	} else {
-		//--------------------------------------------------------
-		cmdArgs := []string{
-			"export",
-			"--no_header",
-			"--fmt",
-			"txt",
-			"[{ADDRESS}]",
-			"--chain",
-			"[{CHAIN}]",
-			"--logs",
-			"--emitter",
-			"[{TOKEN}]",
-			"--reversed",
-			"--first_block",
-			"[{FIRST}]",
-			"--last_block",
-			"[{LAST}]",
-			"--cache",
-			"--articulate",
-			"[{TOPIC}]"}
-		fields := []string{"address", "chain", "token", "first", "last", "topic"}
-		values := []string{tx.Sender, chain, tx.Token, firstBlocks[chain], tx.BlockNum, "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"}
-		Replace(cmdArgs, fields, values)
-
-		filterExport := func(line string) bool {
-			return strings.Contains(line, "to:"+tx.Sender)
-		}
-
-		commandToString12(w, cmdArgs, filterExport, postExport)
+		chifra.SourceOfFunds(w, tx, chain, depth, nil, postExportFunc)
 	}
 }
 
-func Replace(inOut []string, fields, values []string) {
-	for f, field := range fields {
-		for i := 0; i < len(inOut); i++ {
-			inOut[i] = strings.Replace(inOut[i], "[{"+strings.ToUpper(field)+"}]", values[f], -1)
-		}
-	}
-}
-
+// noFunc
 func noFunc(line string) bool {
 	return true
 }
 
+// transFunc
 var transFunc = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
 	if !filter(strIn) {
 		return
 	}
 
-	log := Cut(w, strIn, []int{12}, []string{}, true /* silent */, 0)[0]
-	log = strings.Replace(log, "{name:transfer|inputs:{_to:", "", -1)
-	log = strings.Replace(log, "|_value:", "\t", -1)
-	log = strings.Replace(log, "|value:", "\t", -1)
-	log = strings.Replace(log, "}|outputs:{_success:}}", "", -1)
-	log = strings.Trim(log, "\n")
-
 	names, locations := chifra.TransactionFields()
-	strOut := strIn + "\t" + log
+	strOut := strIn + "\t" + cleanLog(Cut(w, strIn, []int{12}, []string{}, true /* silent */, 0)[0])
 	out = Cut(w, strOut, locations, names, false /* silent */, 0)
 	return
 }
 
-var postListCount = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
+// postListFunc
+var postListFunc = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
 	return Cut(w, strIn, []int{1}, []string{"cnt"}, true /* silent */, 1)
 }
 
-var postExport = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
+// postExportFunc
+var postExportFunc = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
 	logs := strings.Split(strIn, "\n")
 	for _, ll := range logs {
 		// logger.Log(logger.Progress, "Processing log ", i, " of ", len(logs))
 		if !filter(ll) {
 			continue
 		}
-		ll = strings.Replace(ll, "{name:transfer|inputs:{_to:", "", -1)
-		ll = strings.Replace(ll, "|_value:", "\t", -1)
-		ll = strings.Replace(ll, "|value:", "\t", -1)
-		ll = strings.Replace(ll, "}|outputs:{_success:}}", "", -1)
-		ll = strings.Trim(ll, "\n")
-		strOut := ll // strIn + "\t" + ll
-		// blockNumber	transactionIndex	logIndex	timestamp	address	topic0	topic1	topic2	topic3	data	compressedLog
+		strOut := cleanLog(ll)
 		fieldLocs := []int{0, 1, 2, 3, 4, 5, 11}
 		fieldNames := []string{"blockNum", "txId", "logId", "date/tx_id", "address", "hash", "log"}
 		ln := Cut(w, strOut, fieldLocs, fieldNames, true /* silent */, 1)
-		// fmt.Fprintln(w, "len:", len(ln))
 		lll := ln[len(ln)-1]
 		isExchange, which := hasExchange(lll)
 		isFriend, who := hasFriend(lll)
@@ -166,11 +114,6 @@ func hasFriend(s string) (bool, string) {
 		}
 	}
 	return false, ""
-}
-
-var firstBlocks = map[string]string{
-	"mainnet": "13868853",
-	"gnosis":  "19747830",
 }
 
 type txId struct {
@@ -294,30 +237,14 @@ func Cut(w *os.File, line string, fields []int, fns []string, silent bool, depth
 	return ret
 }
 
-type filterFunc func(string) bool
-type postFunc func(*os.File, string, func(string) bool) []string
-
-func commandToString12(w *os.File, args []string, filter filterFunc, post postFunc) []string {
-	// fmt.Fprintln(w, colors.Green, "chifra", strings.Join(args, " "), colors.Off)
-	if ret, err := exec.Command("chifra", args...).Output(); err != nil {
-		fmt.Fprintln(os.Stderr, "There was an error running the command: ", err)
-		os.Exit(1)
-	} else {
-		if post == nil {
-			log.Fatal("You must provide a post processing function")
-		}
-		r := string(ret)
-		s := strings.Split(r, "\t")
-		if len(s) > 0 {
-			return post(w, r, filter)
-		}
-	}
-	return []string{}
-}
-
-func isValidHash(hash string) bool {
-	ok, err := validate.IsValidHex("tx_hash", hash, 32)
-	return ok && err == nil
+func cleanLog(strIn string) string {
+	ret := strIn
+	ret = strings.Replace(ret, "{name:transfer|inputs:{_to:", "", -1)
+	ret = strings.Replace(ret, "|_value:", "\t", -1)
+	ret = strings.Replace(ret, "|value:", "\t", -1)
+	ret = strings.Replace(ret, "}|outputs:{_success:}}", "", -1)
+	ret = strings.Trim(ret, "\n")
+	return ret
 }
 
 // getSofOptions processes command line options for the Rounds command
@@ -344,9 +271,9 @@ func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
 	for _, round := range globals.Rounds {
 		donations, _ := data.NewDonations(data.GetFilename("eligible", "csv", round), "csv", data.SortByHash)
 		for i, donation := range donations {
-			if uint64(i) < max_rows {
+			if uint64(i) < max_rows && validate.IsValidHash(donation.TxHash) {
 				w := os.Stdout
-				findSourceOfFunds(w, i, donation.TxHash, donation.Network)
+				FindSourceOfFunds(w, fmt.Sprintf("%d-%d-%d.", round.Id, i, len(donations)), 0, donation.TxHash, donation.Network)
 			}
 		}
 	}
