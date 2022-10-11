@@ -27,7 +27,7 @@ func findSourceOfFunds(w *os.File, i int, hash, chain string) {
 
 	// get the transaction we're interested in
 	callParams := map[string]string{"chain": chain, "hash": hash}
-	tx := chifra.TransactionsCommand(w, callParams, noFunc, postTrans)
+	tx := chifra.TransactionsCommand(w, callParams, noFunc, transFunc)
 
 	// if there's too many records, we bail out
 	nRecords := chifra.ListCountCommand(w, chain, tx.Sender, nil, postListCount)
@@ -79,18 +79,20 @@ func noFunc(line string) bool {
 	return true
 }
 
-var postTrans = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
+var transFunc = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
 	if !filter(strIn) {
 		return
 	}
+
 	log := Cut(w, strIn, []int{12}, []string{}, true /* silent */, 0)[0]
 	log = strings.Replace(log, "{name:transfer|inputs:{_to:", "", -1)
 	log = strings.Replace(log, "|_value:", "\t", -1)
 	log = strings.Replace(log, "|value:", "\t", -1)
 	log = strings.Replace(log, "}|outputs:{_success:}}", "", -1)
 	log = strings.Trim(log, "\n")
-	strOut := strIn + "\t" + log
+
 	names, locations := chifra.TransactionFields()
+	strOut := strIn + "\t" + log
 	out = Cut(w, strOut, locations, names, false /* silent */, 0)
 	return
 }
