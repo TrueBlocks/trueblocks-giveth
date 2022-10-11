@@ -103,10 +103,11 @@ func AddressToName(addrIn string, decorated bool) (*names.Name, error) {
 		colorMap[addrIn] = color
 	}
 
-	if decorated {
-		name.Name = colors.BrightBlack + addrIn[:5] + "..." + addrIn[len(addrIn)-3:] + " " + color + strings.Replace(strings.ToLower(name.Name), " ", "-", -1)
+	if decorated && len(name.Address) == 0 {
+		// name.Name = colors.BrightBlack + addrIn[:5] + "..." + addrIn[len(addrIn)-3:] + " " + color + strings.Replace(strings.ToLower(name.Name), " ", "-", -1) + colors.Off
+		name.Name = color + addrIn + colors.Off
 	} else {
-		name.Name = color + strings.Replace(strings.ToLower(name.Name), " ", "-", -1)
+		name.Name = color + strings.Replace(strings.ToLower(name.Name), " ", "-", -1) + colors.Off
 	}
 
 	return &name, nil

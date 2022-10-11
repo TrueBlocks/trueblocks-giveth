@@ -17,26 +17,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
-	w := os.Stdout
-
-	max_rows, globals, err := getSofOptions(cmd, args)
-	if err != nil {
-		return err
-	}
-
-	for _, round := range globals.Rounds {
-		donations, _ := data.NewDonations(data.GetFilename("eligible", "csv", round), "csv", data.SortByHash)
-		for i, donation := range donations {
-			if uint64(i) < max_rows {
-				findSourceOfFunds(w, i, donation.TxHash, donation.Network)
-			}
-		}
-	}
-
-	return nil
-}
-
 func findSourceOfFunds(w *os.File, i int, hash, chain string) {
 	if !isValidHash(hash) {
 		// ignore header
@@ -45,15 +25,14 @@ func findSourceOfFunds(w *os.File, i int, hash, chain string) {
 
 	fmt.Fprintln(w, "\n", colors.BrightBlack+strings.Repeat("-", 5), fmt.Sprintf("%d.", i), hash, chain, strings.Repeat("-", 70), colors.Off)
 
-	lastBlock, from, to := chifra.TransactionCommand(w, map[string]string{
-		"chain": chain,
-		"hash":  hash,
-	}, noOp, postTrans)
+	// get the transaction we're interested in
+	callParams := map[string]string{"chain": chain, "hash": hash}
+	tx := chifra.TransactionsCommand(w, callParams, noOp, postTrans)
 
-	//--------------------------------------------------------
-	nRecords := chifra.ListCountCommand(w, from, chain, nil, postListCount)
+	// if there's too many records, we bail out
+	nRecords := chifra.ListCountCommand(w, chain, tx.Sender, nil, postListCount)
 	if nRecords > 20000 {
-		fmt.Fprintln(os.Stderr, colors.Yellow, "Skipping address", from, "too many records:", nRecords, colors.Off)
+		fmt.Fprintln(os.Stderr, colors.Yellow, "Skipping address", tx.Sender, "too many records:", nRecords, colors.Off)
 
 	} else {
 		//--------------------------------------------------------
@@ -77,11 +56,11 @@ func findSourceOfFunds(w *os.File, i int, hash, chain string) {
 			"--articulate",
 			"[{TOPIC}]"}
 		fields := []string{"address", "chain", "token", "first", "last", "topic"}
-		values := []string{from, chain, to, firstBlocks[chain], lastBlock, "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"}
+		values := []string{tx.Sender, chain, tx.Token, firstBlocks[chain], tx.BlockNum, "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"}
 		Replace(cmdArgs, fields, values)
 
 		filterExport := func(line string) bool {
-			return strings.Contains(line, "to:"+from)
+			return strings.Contains(line, "to:"+tx.Sender)
 		}
 
 		commandToString12(w, cmdArgs, filterExport, postExport)
@@ -254,7 +233,7 @@ func (id *transfer) Get(w string) string {
 }
 
 func Cut(w *os.File, line string, fields []int, fns []string, silent bool, depth int) []string {
-	verbose := os.Getenv("VERBOSE") == "true"
+	showAddrs := os.Getenv("ADDRS") == "true"
 	theId := txId{}
 	theTransfer := transfer{}
 	var ret []string
@@ -295,7 +274,7 @@ func Cut(w *os.File, line string, fields []int, fns []string, silent bool, depth
 				}
 
 				if validate.IsValidAddress(val) || val == "0x0" {
-					if name, err := chifra.AddressToName(val, verbose /* decorated */); err == nil {
+					if name, err := chifra.AddressToName(val, showAddrs /* decorated */); err == nil {
 						fn = fn + "-name"
 						val = name.Name
 					}
@@ -353,4 +332,23 @@ func getSofOptions(cmd *cobra.Command, args []string) (max_rows uint64, globals 
 	}
 
 	return
+}
+
+func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
+	max_rows, globals, err := getSofOptions(cmd, args)
+	if err != nil {
+		return err
+	}
+
+	for _, round := range globals.Rounds {
+		donations, _ := data.NewDonations(data.GetFilename("eligible", "csv", round), "csv", data.SortByHash)
+		for i, donation := range donations {
+			if uint64(i) < max_rows {
+				w := os.Stdout
+				findSourceOfFunds(w, i, donation.TxHash, donation.Network)
+			}
+		}
+	}
+
+	return nil
 }

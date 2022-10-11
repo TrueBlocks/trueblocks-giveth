@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func ListCountCommand(w *os.File, address, chain string, filter filterFunc, post postFunc) int64 {
+func ListCountCommand(w *os.File, chain, address string, filter filterFunc, post postFunc) int64 {
 	var cmdArgs = []string{
 		"list",
 		"--no_header",

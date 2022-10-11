@@ -52,7 +52,7 @@ func getTransValue(vals []string, fn string) string {
 	return vals[transFieldLocs[fn][1]]
 }
 
-func TransactionCommand(w *os.File, fields map[string]string, filter filterFunc, post postFunc) (string, string, string) {
+func TransactionsCommand(w *os.File, fields map[string]string, filter filterFunc, post postFunc) SimpleTransaction {
 	cmdArgs := []string{}
 	cmdCopy := transactionCmd
 	for _, f := range cmdCopy {
@@ -61,5 +61,15 @@ func TransactionCommand(w *os.File, fields map[string]string, filter filterFunc,
 		cmdArgs = append(cmdArgs, f)
 	}
 	vals := commandToStrings(w, cmdArgs, filter, post)
-	return getTransValue(vals, "blockNum"), getTransValue(vals, "sender"), getTransValue(vals, "token")
+	return SimpleTransaction{
+		BlockNum: getTransValue(vals, "blockNum"),
+		Sender:   getTransValue(vals, "sender"),
+		Token:    getTransValue(vals, "token"),
+	}
+}
+
+type SimpleTransaction struct {
+	Sender   string `json:"sender"`
+	Token    string `json:"token"`
+	BlockNum string `json:"blockNum"`
 }
