@@ -52,14 +52,6 @@ func RunData(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-var cmds = map[string]string{
-	"purple-list":     "purpleList",
-	"eligible":        "eligible-donations",
-	"not-eligible":    "not-eligible-donations",
-	"purple-verified": "purpleList-donations-to-verifiedProjects",
-	"calc-givback":    "calculate-givback",
-}
-
 func getUrl(cmd, format string, round data.Round) string {
 	defOpts := "startDate=[SD]&endDate=[ED]&download=[DL]"
 	var opts = map[string]string{
@@ -72,7 +64,7 @@ func getUrl(cmd, format string, round data.Round) string {
 
 	url := "https://givback.develop.giveth.io/" + opts[cmd]
 	url = strings.Replace(url, "[OPTS]", defOpts, -1)
-	url = strings.Replace(url, "[CMD]", cmds[cmd], -1)
+	url = strings.Replace(url, "[CMD]", data.Cmds[cmd], -1)
 	url = strings.Replace(url, "[SD]", utils.GetGivethDate(round.StartDate), -1)
 	url = strings.Replace(url, "[ED]", utils.GetGivethDate(round.EndDate), -1)
 	if format == "txt" || format == "csv" {
@@ -89,27 +81,8 @@ func getUrl(cmd, format string, round data.Round) string {
 	return url
 }
 
-func getFilename(cmd, format string, round data.Round) string {
-	var opts = map[string]string{
-		"purple-list":     "[CMD]/[CMD].[FORMAT]",
-		"eligible":        "[CMD]/[CMD]-[SD]-[ED]-Round[RND].[FORMAT]",
-		"not-eligible":    "[CMD]/[CMD]-[SD]-[ED]-Round[RND].[FORMAT]",
-		"purple-verified": "[CMD]/[CMD]-[SD]-[ED]-Round[RND].[FORMAT]",
-		"calc-givback":    "[CMD]/[CMD]-[SD]-[ED]-Round[RND].[FORMAT]",
-	}
-
-	fn := data.DataFolder() + opts[cmd]
-	fn = strings.Replace(fn, "[CMD]", cmds[cmd], -1)
-	fn = strings.Replace(fn, "[SD]", utils.GetGivethDate(round.StartDate), -1)
-	fn = strings.Replace(fn, "[ED]", utils.GetGivethDate(round.EndDate), -1)
-	fn = strings.Replace(fn, "[RND]", fmt.Sprintf("%02d", round.Id), -1)
-	fn = strings.Replace(fn, "[FORMAT]", format, -1)
-	fn = strings.Replace(strings.Replace(fn, "%2F", "_", -1), "%3A", "_", -1)
-	return fn
-}
-
 func getQuery(cmd, format string, round data.Round) data.Query {
-	return data.Query{Cmd: cmd, Url: getUrl(cmd, format, round), Fn: getFilename(cmd, format, round)}
+	return data.Query{Cmd: cmd, Url: getUrl(cmd, format, round), Fn: data.GetFilename(cmd, format, round)}
 }
 
 func DataTypes() []string {

@@ -15,8 +15,5 @@ way back to the given start block on the given chain.`,
 }
 
 func init() {
-	sourceOfFundsCmd.Flags().StringP("hash", "", "", "The hash of the transaction to trace")
-	sourceOfFundsCmd.Flags().StringP("chain", "", "", "The chain to explore, one of [mainnet|gnosis]")
-	sourceOfFundsCmd.Flags().SortFlags = false
 	rootCmd.AddCommand(sourceOfFundsCmd)
 }
