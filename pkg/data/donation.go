@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"sort"
 	"strings"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
@@ -28,7 +29,14 @@ func (d Donation) String() string {
 	return string(b)
 }
 
-func NewDonations(path string, format string) (donations []Donation, err error) {
+type sortField int
+
+const (
+	NoSort sortField = iota
+	SortByHash
+)
+
+func NewDonations(path string, format string, sortBy sortField) (donations []Donation, err error) {
 	header := make(map[string]int)
 	lines := file.AsciiFileToLines(path)
 	for _, line := range lines {
@@ -66,5 +74,13 @@ func NewDonations(path string, format string) (donations []Donation, err error) 
 		}
 	}
 
+	switch sortBy {
+	case SortByHash:
+		sort.Slice(donations, func(i, j int) bool {
+			return donations[i].TxHash < donations[j].TxHash
+		})
+	case NoSort:
+	default:
+	}
 	return
 }

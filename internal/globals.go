@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/utils"
+	"github.com/TrueBlocks/trueblocks-giveth/pkg/chifra"
 	"github.com/TrueBlocks/trueblocks-giveth/pkg/data"
 	"github.com/spf13/cobra"
 )
@@ -20,6 +22,10 @@ type Globals struct {
 }
 
 func GetGlobals(defFmt string, cmd *cobra.Command, args []string) (ret Globals, err error) {
+	if !utils.IsTerminal() || os.Getenv("NO_COLORS") == "true" {
+		chifra.ColorsOff()
+	}
+
 	if !file.FolderExists(data.DataFolder()) {
 		err = fmt.Errorf("data folder (%s) not found in current working folder", data.DataFolder())
 		return

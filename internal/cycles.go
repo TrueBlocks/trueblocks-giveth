@@ -21,7 +21,7 @@ func RunCycles(cmd *cobra.Command, args []string) error {
 
 	CleanFolder(globals.Rounds[0].Id)
 
-	donations, _ := data.NewDonations(data.GetFilename("eligible", "csv", globals.Rounds[0]), "csv")
+	donations, _ := data.NewDonations(data.GetFilename("eligible", "csv", globals.Rounds[0]), "csv", data.NoSort)
 
 	extractTransations(donations, "gnosis", globals.Rounds[0].Id)
 	donors := extractDonors(donations, "gnosis", globals.Rounds[0].Id)

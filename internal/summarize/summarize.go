@@ -24,6 +24,6 @@ func getSummarizeOptions(cmd *cobra.Command, args []string) (donations []data.Do
 	if err != nil {
 		return
 	}
-	donations, err = data.NewDonations(data.DataFolder()+"summaries/all_donations.csv", "csv")
+	donations, err = data.NewDonations(data.DataFolder()+"summaries/all_donations.csv", "csv", data.NoSort)
 	return
 }

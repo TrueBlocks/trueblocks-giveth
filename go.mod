@@ -6,6 +6,7 @@ require (
 	github.com/TrueBlocks/trueblocks-core/src/apps/chifra v0.0.0-20220616111316-95beba3cfe55
 	github.com/bykof/gostradamus v1.0.4
 	github.com/ethereum/go-ethereum v1.10.25
+	github.com/prysmaticlabs/prysm v1.4.4
 	github.com/prysmaticlabs/prysm/v3 v3.1.1
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0

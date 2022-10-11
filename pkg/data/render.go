@@ -17,7 +17,7 @@ func GetDataFromCmd(cmd, fn, fmt string) interface{} {
 	case "not-eligible":
 		fallthrough
 	case "purple-verified":
-		iFace, _ = NewDonations(fn, fmt)
+		iFace, _ = NewDonations(fn, fmt, NoSort)
 	case "calc-givback":
 		iFace, _ = NewGivback(fn, fmt)
 	default:
