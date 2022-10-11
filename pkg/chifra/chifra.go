@@ -11,8 +11,7 @@ import (
 type filterFunc func(string) bool
 type postFunc func(*os.File, string, func(string) bool) []string
 
-func commandToStrings(w *os.File, args []string, filter filterFunc, post postFunc) []string {
-	// fmt.Fprintln(w, colors.Green, "chifra", strings.Join(args, " "), colors.Off)
+func commandToFields(w *os.File, args []string, filter filterFunc, post postFunc) []string {
 	if ret, err := exec.Command("chifra", args...).Output(); err != nil {
 		fmt.Fprintln(os.Stderr, "There was an error running the command: ", err)
 		os.Exit(1)
@@ -27,4 +26,14 @@ func commandToStrings(w *os.File, args []string, filter filterFunc, post postFun
 		}
 	}
 	return []string{}
+}
+
+func commandToLine(w *os.File, args []string, filter filterFunc, post postFunc) []byte {
+	if bytes, err := exec.Command("chifra", args...).Output(); err != nil {
+		fmt.Fprintln(os.Stderr, "There was an error running the command: ", err)
+		os.Exit(1)
+	} else {
+		return bytes
+	}
+	return []byte{}
 }

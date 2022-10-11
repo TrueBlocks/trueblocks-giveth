@@ -20,7 +20,7 @@ func ListCountCommand(w *os.File, chain, address string, filter filterFunc, post
 	values := []string{address, chain}
 	replace(cmdArgs, fields, values)
 
-	ret := commandToStrings(w, cmdArgs, filter, post)
+	ret := commandToFields(w, cmdArgs, filter, post)
 	r, _ := strconv.ParseInt(ret[0], 10, 64)
 	return r
 }
