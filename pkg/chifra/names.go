@@ -99,8 +99,11 @@ func AddressToName(addrIn string, decorated bool) (*names.Name, error) {
 	if len(name.Name) > max {
 		name.Name = name.Name[:max]
 	}
-	name.Name += colors.Off
+	if len(name.Decimals) > 0 {
+		name.Name += ":" + name.Decimals
+	}
 	name.Name = utils.PadRight(name.Name, max, ' ')
+	name.Name += colors.Off
 
 	color := colorMap[addrIn]
 	if color == "" {
