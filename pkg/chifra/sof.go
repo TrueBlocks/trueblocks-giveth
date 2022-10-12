@@ -54,17 +54,6 @@ var firstBlocks = map[string]string{
 	"gnosis":  "19747830",
 }
 
-func FindSourceOfFunds(w *os.File, depth, max_depth int, hash, chain string) error {
-	callParams := map[string]string{"chain": chain, "hash": hash}
-	if tx, err := TransactionsCommand(w, callParams, nil, nil); err != nil {
-		return err
-	} else {
-		fmt.Fprintln(w, tx.String())
-		SourceOfFunds(w, tx, chain, depth, nil, postExportFunc)
-	}
-	return nil
-}
-
 // postListFunc
 var postListFunc = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
 	return cut(w, strIn, []int{1}, []string{"cnt"}, true /* silent */, 1)

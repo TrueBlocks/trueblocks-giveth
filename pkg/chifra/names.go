@@ -79,8 +79,13 @@ func AddressToName(addrIn string, decorated bool) (*names.Name, error) {
 	name := (*namesMap)[common.HexToAddress(addrIn)]
 	if addrIn == "0x0" {
 		name.Name = "0x00000000...00000000"
+
+	} else if addrIn == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" {
+		name.Name = "ETHER"
+
 	} else if len(name.Name) == 0 {
 		name.Name = DeterministicName([]byte(addrIn), " ")
+
 	} else {
 		if strings.Contains(strings.ToLower(name.Tags), "giveth") && strings.Contains(strings.ToLower(name.Tags), "project") {
 			name.Name = name.Name + "*"

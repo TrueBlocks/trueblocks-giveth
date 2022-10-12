@@ -27,7 +27,7 @@ func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
 				w := os.Stdout
 				// let them know we're here
 				fmt.Fprintln(w, "\n", colors.BrightBlack+strings.Repeat("-", 5), fmt.Sprintf("%d-%d-%d.", round.Id, i, len(donations)), donation.TxHash, donation.Network, strings.Repeat("-", 70), colors.Off)
-				if err := chifra.FindSourceOfFunds(w, 0, int(max_depth), donation.TxHash, donation.Network); err != nil {
+				if err := chifra.TraceSourceForTx(w, 0, int(max_depth), donation.TxHash, donation.Network); err != nil {
 					return err
 				}
 			}

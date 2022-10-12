@@ -1,8 +1,6 @@
 package chifra
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -11,49 +9,58 @@ import (
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/utils"
 )
 
-var txCmdString = []string{
-	"transactions",
-	"--no_header",
-	"--articulate",
-	"--fmt",
-	"json",
-	"--chain",
-	"[{CHAIN}]",
-	"[{HASH}]",
-}
-
-func TransactionsCommand(w *os.File, fields map[string]string, filter filterFunc, post postFunc) (SimpleTransfer, error) {
+func ChifraTransactions(w *os.File, fields map[string]string) (*SimpleTransfer, error) {
 	cmdArgs := []string{}
-	copy := txCmdString
-	for _, f := range copy {
+	var cmdString = []string{
+		"transactions",
+		"--no_header",
+		"--articulate",
+		"--fmt",
+		"json",
+		"--chain",
+		"[{CHAIN}]",
+		"[{HASH}]",
+	}
+
+	for _, f := range cmdString {
 		f = strings.Replace(f, "[{CHAIN}]", fields["chain"], -1)
 		f = strings.Replace(f, "[{HASH}]", fields["hash"], -1)
 		cmdArgs = append(cmdArgs, f)
 	}
 
-	result := commandToLine(w, cmdArgs, filter, post)
-	resp := TransactionsResponse{}
-	if err := json.Unmarshal(result, &resp); err != nil {
-		return SimpleTransfer{}, err
-	} else if len(resp.Data) == 0 {
-		return SimpleTransfer{}, errors.New("transaction not found " + strings.Join(cmdArgs, " "))
-	}
-	ret := resp.Data[0]
-	if ret.ArticulatedTx.Inputs["to"] != "" {
-		ret.Recipient = ret.ArticulatedTx.Inputs["to"]
-	} else if ret.ArticulatedTx.Inputs["_to"] != "" {
-		ret.Recipient = ret.ArticulatedTx.Inputs["_to"]
-	}
-	if ret.ArticulatedTx.Inputs["value"] != "" {
-		ret.Amount = ret.ArticulatedTx.Inputs["value"]
-	} else if ret.ArticulatedTx.Inputs["_value"] != "" {
-		ret.Amount = ret.ArticulatedTx.Inputs["_value"]
-	}
-	return ret, nil
-}
+	if result, err := commandToRecord[SimpleTransfer](w, cmdArgs); err != nil {
+		return nil, err
+	} else {
+		if len(result.Input) > 10 && len(result.Encoding) == 0 {
+			result.Encoding = result.Input[:10]
+		} else {
+			result.Recipient = result.Token
+			result.Token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+			result.Amount = fmt.Sprintf("%f", result.Ether)
+		}
+		if result.Encoding == "0xa9059cbb" {
+			// compressedTx format is {name:transfer|inputs:{to:0xb2645970941b45f508b5333c1d628ad619adde20|value:200000000000000000000}|outputs:{_success:}}
+			removes := []string{
+				"{",
+				"}",
+				"inputs:",
+				"outputs:",
+			}
+			input := result.CompressedTx
+			for _, r := range removes {
+				input = strings.Replace(input, r, "", -1)
+			}
+			parts := strings.Split(input, "|")
+			for i := 0; i < len(parts); i++ {
+				parts[i] = strings.Split(parts[i], ":")[1]
+			}
+			result.Recipient = parts[1]
+			result.Amount = parts[2]
+		}
 
-type TransactionsResponse struct {
-	Data []SimpleTransfer `json:"data"`
+		fmt.Fprintln(w, result.String())
+		return &result, nil
+	}
 }
 
 func (tx *SimpleTransfer) String() string {
@@ -62,26 +69,40 @@ func (tx *SimpleTransfer) String() string {
 	t, _ := AddressToName(tx.Token, false)
 	r, _ := AddressToName(tx.Recipient, false)
 	a := "[" + colors.Yellow + utils.PadLeft(tx.Amount, 25, '.') + colors.Off + "]"
-	return fmt.Sprintf(" %s %s %s %s %s to %s", d, s.Name, colors.BrightWhite+"donated"+colors.Off, a, t.Name, r.Name)
+	return fmt.Sprintf(" %s %s %s %s of %s to %s", d, s.Name, colors.BrightWhite+"donated"+colors.Off, a, t.Name, r.Name)
 }
 
 type SimpleTransfer struct {
-	Hash             string `json:"hash"`
-	BlockNumber      uint64 `json:"blockNumber"`
-	TransactionIndex uint64 `json:"transactionIndex"`
-	Timestamp        int64  `json:"timestamp"`
-	Date             string `json:"date"`
-	Sender           string `json:"from"`
-	Token            string `json:"to"`
-	Recipient        string
-	Amount           string
+	Hash             string        `json:"hash"`
+	BlockNumber      uint64        `json:"blockNumber"`
+	TransactionIndex uint64        `json:"transactionIndex"`
+	Timestamp        int64         `json:"timestamp"`
+	Date             string        `json:"date"`
+	Ether            float64       `json:"ether"`
+	Sender           string        `json:"from"`
+	Token            string        `json:"to"`
+	Recipient        string        `json:"recipient"`
+	Amount           string        `json:"amount"`
+	Input            string        `json:"input"`
+	Encoding         string        `json:"encoding"`
 	ArticulatedTx    ArticulatedTx `json:"articulatedTx"`
 	CompressedTx     string        `json:"compressedTx"`
 }
 
 type ArticulatedTx struct {
-	Name   string            `json:"name"`
-	Inputs map[string]string `json:"inputs"`
+	Name    string            `json:"name"`
+	Inputs  map[string]string `json:"inputs"`
+	Outputs map[string]string `json:"outputs"`
+}
+
+func TraceSourceForTx(w *os.File, depth, max_depth int, hash, chain string) error {
+	callParams := map[string]string{"chain": chain, "hash": hash}
+	if tx, err := ChifraTransactions(w, callParams); err != nil {
+		return err
+	} else {
+		SourceOfFunds(w, *tx, chain, depth, nil, postExportFunc)
+	}
+	return nil
 }
 
 /*

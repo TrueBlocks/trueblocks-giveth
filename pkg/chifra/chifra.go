@@ -1,6 +1,8 @@
 package chifra
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -28,12 +30,22 @@ func commandToFields(w *os.File, args []string, filter filterFunc, post postFunc
 	return []string{}
 }
 
-func commandToLine(w *os.File, args []string, filter filterFunc, post postFunc) []byte {
+func commandToRecord[T SimpleTransfer](w *os.File, args []string) (T, error) {
 	if bytes, err := exec.Command("chifra", args...).Output(); err != nil {
 		fmt.Fprintln(os.Stderr, "There was an error running the command: ", err)
 		os.Exit(1)
 	} else {
-		return bytes
+		resp := ChifraResponse[T]{}
+		if err := json.Unmarshal(bytes, &resp); err != nil {
+			return T{}, err
+		} else if len(resp.Data) == 0 {
+			return T{}, errors.New("transaction not found " + strings.Join(args, " "))
+		}
+		return resp.Data[0], nil
 	}
-	return []byte{}
+	return T{}, nil
+}
+
+type ChifraResponse[T SimpleTransfer] struct {
+	Data []T `json:"data"`
 }
