@@ -63,6 +63,7 @@ var postListFunc = func(w *os.File, strIn string, filter func(string) bool) (out
 
 // postExportFunc
 var postExportFunc = func(w *os.File, strIn string, filter func(string) bool) (out []string) {
+	verbose := os.Getenv("SHOW_SKIPS") == "true"
 	logs := strings.Split(strIn, "\n")
 	for _, ll := range logs {
 		// logger.Log(logger.Progress, "Processing log ", i, " of ", len(logs))
@@ -77,10 +78,14 @@ var postExportFunc = func(w *os.File, strIn string, filter func(string) bool) (o
 		isExchange, which := hasExchange(lll)
 		isFriend, who := hasFriend(lll)
 		if isExchange {
-			fmt.Fprintln(os.Stderr, colors.Yellow+"    Skipping staking contract "+which+colors.Off)
+			if verbose {
+				fmt.Fprintln(os.Stderr, colors.Yellow+"    Skipping staking contract "+which+colors.Off)
+			}
 
 		} else if isFriend {
-			fmt.Fprintln(os.Stderr, colors.Yellow+"    Skipping friend "+who+colors.Off)
+			if verbose {
+				fmt.Fprintln(os.Stderr, colors.Yellow+"    Skipping friend "+who+colors.Off)
+			}
 
 		} else {
 			// fmt.Fprintln(w, colors.BrightBlack, "   ", strings.Repeat("-", 120), colors.Off)
@@ -183,7 +188,7 @@ func (id *transfer) Get(w string) string {
 }
 
 func cut(w *os.File, line string, fields []int, fns []string, silent bool, depth int) []string {
-	showAddrs := os.Getenv("ADDRS") == "true"
+	showAddrs := os.Getenv("SHOW_ADDRS") == "true"
 	theId := txId{}
 	theTransfer := transfer{}
 	var ret []string

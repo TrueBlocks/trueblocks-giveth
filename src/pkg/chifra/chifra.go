@@ -32,7 +32,7 @@ func commandToFields(w *os.File, args []string, filter filterFunc, post postFunc
 	return []string{}
 }
 
-func commandToRecord[T SimpleTransfer](w *os.File, args []string) (T, error) {
+func commandToRecord[T SimpleTransfer | SimpleListCount](w *os.File, args []string) (T, error) {
 	if bytes, err := exec.Command("chifra", args...).Output(); err != nil {
 		fmt.Fprintln(os.Stderr, "There was an error running the command: ", err)
 		os.Exit(1)
@@ -61,7 +61,10 @@ func TraceSourceOfFunds(w *os.File, depth, max_depth int, hash, chain string) er
 		callParams = map[string]string{"chain": chain, "sender": tx.Sender}
 		nRecords := ChifraList(w, callParams, postListFunc)
 		if nRecords > 20000 {
-			fmt.Fprintln(os.Stderr, colors.Yellow, "Skipping address", tx.Sender, "too many records:", nRecords, colors.Off)
+			verbose := os.Getenv("SHOW_SKIPS") == "true"
+			if verbose {
+				fmt.Fprintln(os.Stderr, colors.Yellow, "Skipping address", tx.Sender, "too many records:", nRecords, colors.Off)
+			}
 			return nil
 		}
 
