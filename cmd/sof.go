@@ -16,5 +16,6 @@ way back to the given start block on the given chain.`,
 
 func init() {
 	sourceOfFundsCmd.Flags().StringP("hash", "a", "", "trace source of funds for a single hash")
+	sourceOfFundsCmd.Flags().Uint64P("levels", "l", "", "the maximum number of levels deep to dig")
 	rootCmd.AddCommand(sourceOfFundsCmd)
 }

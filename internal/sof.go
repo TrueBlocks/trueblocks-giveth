@@ -15,7 +15,7 @@ import (
 )
 
 func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
-	hash, max_rows, max_depth, globals, err := getSofOptions(cmd, args)
+	hash, _, max_rows, max_depth, globals, err := getSofOptions(cmd, args)
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
 }
 
 // getSofOptions processes command line options for the Rounds command
-func getSofOptions(cmd *cobra.Command, args []string) (hash string, max_rows, max_depth uint64, globals Globals, err error) {
+func getSofOptions(cmd *cobra.Command, args []string) (hash string, levels uint64, max_rows, max_depth uint64, globals Globals, err error) {
 	globals, err = GetGlobals("csv", cmd, args)
 	if err != nil {
 		return
@@ -55,6 +55,11 @@ func getSofOptions(cmd *cobra.Command, args []string) (hash string, max_rows, ma
 	hash, err = cmd.Flags().GetString("hash")
 	if err != nil {
 		return
+	}
+
+	levels, err = cmd.Flags().GetUint("levels")
+	if levels == 0 {
+		levels = 3
 	}
 
 	max_rows, _ = strconv.ParseUint(os.Getenv("MAX_ROWS"), 10, 64)
