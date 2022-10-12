@@ -57,10 +57,7 @@ func getSofOptions(cmd *cobra.Command, args []string) (hash string, levels uint6
 		return
 	}
 
-	levels, err = cmd.Flags().GetUint("levels")
-	if levels == 0 {
-		levels = 3
-	}
+	levels, err = cmd.Flags().GetUint64("levels")
 
 	max_rows, _ = strconv.ParseUint(os.Getenv("MAX_ROWS"), 10, 64)
 	if max_rows == 0 {
