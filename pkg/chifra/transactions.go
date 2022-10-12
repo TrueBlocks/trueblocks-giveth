@@ -97,13 +97,3 @@ type ArticulatedTx struct {
 	Inputs  map[string]string `json:"inputs"`
 	Outputs map[string]string `json:"outputs"`
 }
-
-func TraceSourceForTx(w *os.File, depth, max_depth int, hash, chain string) error {
-	callParams := map[string]string{"chain": chain, "hash": hash}
-	if tx, err := ChifraTransactions(w, callParams); err != nil {
-		return err
-	} else {
-		SourceOfFunds(w, *tx, chain, depth, nil, postExportFunc)
-	}
-	return nil
-}

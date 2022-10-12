@@ -12,13 +12,7 @@ import (
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/validate"
 )
 
-func SourceOfFunds(w *os.File, tx SimpleTransfer, chain string, depth int, filter filterFunc, post postFunc) {
-	nRecords := ListCountCommand(w, chain, tx.Sender, nil, postListFunc)
-	if nRecords > 20000 {
-		fmt.Fprintln(os.Stderr, colors.Yellow, "Skipping address", tx.Sender, "too many records:", nRecords, colors.Off)
-		return
-	}
-
+func ChifraExport(w *os.File, tx SimpleTransfer, chain string, depth int, filter filterFunc, post postFunc) {
 	cmdArgs := []string{
 		"export",
 		"--no_header",
@@ -47,6 +41,14 @@ func SourceOfFunds(w *os.File, tx SimpleTransfer, chain string, depth int, filte
 	}
 
 	commandToFields(w, cmdArgs, filterExport, post)
+}
+
+func replace(inOut []string, fields, values []string) {
+	for f, field := range fields {
+		for i := 0; i < len(inOut); i++ {
+			inOut[i] = strings.Replace(inOut[i], "[{"+strings.ToUpper(field)+"}]", values[f], -1)
+		}
+	}
 }
 
 var firstBlocks = map[string]string{

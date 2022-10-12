@@ -8,6 +8,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/colors"
 )
 
 type filterFunc func(string) bool
@@ -48,4 +50,23 @@ func commandToRecord[T SimpleTransfer](w *os.File, args []string) (T, error) {
 
 type ChifraResponse[T SimpleTransfer] struct {
 	Data []T `json:"data"`
+}
+
+func TraceSourceOfFunds(w *os.File, depth, max_depth int, hash, chain string) error {
+	callParams := map[string]string{"chain": chain, "hash": hash}
+	if tx, err := ChifraTransactions(w, callParams); err != nil {
+		return err
+
+	} else {
+		callParams = map[string]string{"chain": chain, "sender": tx.Sender}
+		nRecords := ChifraList(w, callParams, postListFunc)
+		if nRecords > 20000 {
+			fmt.Fprintln(os.Stderr, colors.Yellow, "Skipping address", tx.Sender, "too many records:", nRecords, colors.Off)
+			return nil
+		}
+
+		ChifraExport(w, *tx, chain, depth, nil, postExportFunc)
+	}
+
+	return nil
 }

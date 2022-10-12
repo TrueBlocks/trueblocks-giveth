@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// cyclesCmd represents the data command
+// sourceOfFundsCmd represents the data command
 var sourceOfFundsCmd = &cobra.Command{
 	Use:   "sof",
 	Short: "Trace the source of funds for the transaction",
@@ -15,5 +15,6 @@ way back to the given start block on the given chain.`,
 }
 
 func init() {
+	sourceOfFundsCmd.Flags().StringP("hash", "a", "", "trace source of funds for a single hash")
 	rootCmd.AddCommand(sourceOfFundsCmd)
 }

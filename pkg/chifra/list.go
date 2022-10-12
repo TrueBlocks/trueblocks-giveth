@@ -3,10 +3,11 @@ package chifra
 import (
 	"os"
 	"strconv"
-	"strings"
 )
 
-func ListCountCommand(w *os.File, chain, address string, filter filterFunc, post postFunc) int64 {
+func ChifraList(w *os.File, fields map[string]string, post postFunc) int64 {
+	chain := fields["chain"]
+	address := fields["sender"]
 	var cmdArgs = []string{
 		"list",
 		"--no_header",
@@ -16,19 +17,11 @@ func ListCountCommand(w *os.File, chain, address string, filter filterFunc, post
 		"--chain",
 		"[{CHAIN}]",
 		"[{ADDRESS}]"}
-	fields := []string{"address", "chain"}
-	values := []string{address, chain}
-	replace(cmdArgs, fields, values)
+	fieldList := []string{"address", "chain"}
+	valueList := []string{address, chain}
+	replace(cmdArgs, fieldList, valueList)
 
-	ret := commandToFields(w, cmdArgs, filter, post)
+	ret := commandToFields(w, cmdArgs, nil, post)
 	r, _ := strconv.ParseInt(ret[0], 10, 64)
 	return r
-}
-
-func replace(inOut []string, fields, values []string) {
-	for f, field := range fields {
-		for i := 0; i < len(inOut); i++ {
-			inOut[i] = strings.Replace(inOut[i], "[{"+strings.ToUpper(field)+"}]", values[f], -1)
-		}
-	}
 }
