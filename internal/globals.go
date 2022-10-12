@@ -17,6 +17,7 @@ type Globals struct {
 	Update  bool
 	Script  bool
 	Verbose bool
+	Chain   string
 	Sleep   time.Duration
 	Rounds  []data.Round
 }
@@ -43,6 +44,10 @@ func GetGlobals(defFmt string, cmd *cobra.Command, args []string) (ret Globals, 
 	}
 
 	if ret.Update, err = cmd.Flags().GetBool("update"); err != nil {
+		return
+	}
+
+	if ret.Chain, err = cmd.Flags().GetString("chain"); err != nil {
 		return
 	}
 

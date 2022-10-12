@@ -41,6 +41,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolP("update", "u", false, "If present, data commands pull data from Giveth's APIs")
 	rootCmd.PersistentFlags().BoolP("script", "c", false, "If present, data commands generate bash script to query Giveth's APIs")
 	rootCmd.PersistentFlags().Uint64P("sleep", "s", 0, "Instructs the tool how long to sleep between invocations")
+	rootCmd.PersistentFlags().StringP("chain", "", "", "One of [mainnet|gnosis]")
 	rootCmd.PersistentFlags().StringP("fmt", "x", "", "One of [json|csv|txt]")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "If present, certain commands will display extra data")
 	rootCmd.PersistentFlags().SortFlags = false
