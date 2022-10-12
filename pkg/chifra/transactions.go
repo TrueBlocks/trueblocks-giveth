@@ -37,8 +37,7 @@ func ChifraTransactions(w *os.File, fields map[string]string) (*SimpleTransfer, 
 		} else if len(result.Input) < 10 {
 			result.Recipient = result.Token
 			result.Token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-			result.Amount = fmt.Sprintf("%f", result.Ether)
-			// Needs to be a big int, I think
+			// result.Amount = fmt.Sprintf("%f", result.Ether)
 			result.Amount = fmt.Sprintf("%d", result.Value.Uint64())
 		}
 		if result.Encoding == "0xa9059cbb" {
@@ -86,7 +85,7 @@ type SimpleTransfer struct {
 	Sender           string        `json:"from"`
 	Token            string        `json:"to"`
 	Recipient        string        `json:"recipient"`
-	Amount           big.Int       `json:"amount"`
+	Amount           string        `json:"amount"`
 	Input            string        `json:"input"`
 	Encoding         string        `json:"encoding"`
 	ArticulatedTx    ArticulatedTx `json:"articulatedTx"`
