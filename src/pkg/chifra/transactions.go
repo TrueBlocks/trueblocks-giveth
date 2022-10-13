@@ -31,9 +31,9 @@ func ChifraTransactions(w *os.File, fields map[string]string) (*SimpleTransfer, 
 
 func (tx *SimpleTransaction) String() string {
 	d := colors.BrightBlue + strings.Split(tx.Date, ":")[0] + ":" + strings.Split(tx.Date, ":")[1] + colors.Off
-	s, _ := AddressToName(tx.Sender, false)
-	t, _ := AddressToName(tx.Token, false)
-	r, _ := AddressToName(tx.Recipient, false)
+	s, _ := AddressToName(tx.Sender)
+	t, _ := AddressToName(tx.Token)
+	r, _ := AddressToName(tx.Recipient)
 	a := "[" + colors.Yellow + utils.PadLeft(tx.Amount, 25, '.') + colors.Off + "]"
 	return fmt.Sprintf(" %s %s %s %s of %s to %s", d, s.Name, colors.BrightWhite+"donated"+colors.Off, a, t.Name, r.Name)
 }

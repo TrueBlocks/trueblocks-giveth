@@ -11,11 +11,11 @@ import (
 
 func (tr *SimpleTransfer) String() string {
 	d := colors.BrightBlue + strings.Split(tr.Date, ":")[0] + ":" + strings.Split(tr.Date, ":")[1] + colors.Off
-	s, _ := AddressToName(tr.Sender, false)
-	t, _ := AddressToName(tr.Token, false)
-	r, _ := AddressToName(tr.Recipient, false)
+	s, _ := AddressToName(tr.Sender)
+	t, _ := AddressToName(tr.Token)
+	r, _ := AddressToName(tr.Recipient)
 	a := "[" + colors.Yellow + utils.PadLeft(tr.Amount, 25, '.') + colors.Off + "]"
-	return fmt.Sprintf(" %s %s %s %s of %s to %s", d, s.Name, colors.BrightWhite+"donated"+colors.Off, a, t.Name, r.Name)
+	return fmt.Sprintf(" %s %s %s %s of %s to %s", d, s.Name, colors.BrightWhite+"[{DISPO}]"+colors.Off, a, t.Name, r.Name)
 }
 
 type SimpleTransfer struct {

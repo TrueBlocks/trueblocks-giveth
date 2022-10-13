@@ -13,30 +13,24 @@ import (
 )
 
 func ChifraExport(w *os.File, tr *SimpleTransfer, chain string, depth, max_depth int, post postFunc) {
-	args := []string{
-		"export",
-		"--no_header",
-		"--fmt",
-		"txt",
-		"[{ADDRESS}]",
-		"--chain",
-		"[{CHAIN}]",
-		"--logs",
-		"--reversed",
-		"--first_block",
-		"[{FIRST}]",
-		"--last_block",
-		"[{LAST}]",
-		"--cache",
-		"--articulate",
-		"[{TOPIC}]",
+	if tr.Token == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" {
+		return
 	}
 
-	if tr.Token != "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" {
-		args = append(args, "--emitter")
-		args = append(args, "[{TOKEN}]")
-	} else {
-		return
+	args := []string{
+		"export",
+		"--logs",
+		"--no_header",
+		"--cache",
+		"--reversed",
+		"--articulate",
+		"--fmt", "txt",
+		"--chain", "[{CHAIN}]",
+		"--first_block", "[{FIRST}]",
+		"--last_block", "[{LAST}]",
+		"--emitter", "[{TOKEN}]",
+		"[{ADDRESS}]",
+		"[{TOPIC}]",
 	}
 
 	fields := []string{"address", "chain", "token", "first", "last", "topic"}
@@ -68,7 +62,13 @@ var postExportFunc = func(w *os.File, strIn string, filter func(string) bool) {
 		if !filter(ll) {
 			continue
 		}
+		// parts := strings.Split(ll.CompressedLog, "|")
+		// fmt.Printf("%9d-%5d-%5d: %s %s\n", ll.BlockNumber, ll.TransactionIndex, ll.LogIndex, parts[len(parts)-1], ll.TransactionHash)
 		strOut := cleanLog(ll)
+		// fmt.Println(strOut)
+		// fmt.Println()
+		// continue
+
 		fieldLocs := []int{0, 1, 2, 3, 4, 5, 11}
 		ln := cut(strOut, fieldLocs)
 		lll := ln[len(ln)-1]
@@ -162,7 +162,6 @@ func (id *transfer) Get(w string) string {
 }
 
 func showLine(w *os.File, line string, fields []int, fns []string, silent bool, depth int) []string {
-	showAddrs := os.Getenv("SHOW_ADDRS") == "true"
 	theId := txId{}
 	theTransfer := transfer{}
 	var ret []string
@@ -203,7 +202,7 @@ func showLine(w *os.File, line string, fields []int, fns []string, silent bool, 
 				}
 
 				if validate.IsValidAddress(val) || val == "0x0" {
-					if name, err := AddressToName(val, showAddrs /* decorated */); err == nil {
+					if name, err := AddressToName(val); err == nil {
 						fn = fn + "-name"
 						val = name.Name
 					}
