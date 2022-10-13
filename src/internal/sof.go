@@ -32,7 +32,7 @@ func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
 				if i < max_rows && validate.IsValidHash(donation.TxHash) {
 					w := os.Stdout
 					Header(w, round.Id, i, len(donations), donations[i].TxHash, donations[i].Network)
-					if err := chifra.TraceSourceOfFunds(w, 0, int(levels), donation.TxHash, donation.Network); err != nil {
+					if err := chifra.TraceSourceOfFunds(w, 0, levels, donation.TxHash, donation.Network); err != nil {
 						return err
 					}
 				}

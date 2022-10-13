@@ -3,37 +3,36 @@ package chifra
 import (
 	"fmt"
 	"os"
-	"strings"
 )
 
 func ChifraList(w *os.File, fields map[string]string) (*SimpleListCount, error) {
-	cmdArgs := []string{}
-	var cmdString = []string{
+	args := []string{
 		"list",
 		"--no_header",
-		"--count",
+		fields["count"],
 		"--fmt",
 		"json",
 		"--chain",
-		"[{CHAIN}]",
-		"[{ADDRESS}]",
+		fields["chain"],
+		fields["address"],
 	}
 
-	silent := len(fields["--silent"]) > 0
-	for _, f := range cmdString {
-		f = strings.Replace(f, "[{CHAIN}]", fields["chain"], -1)
-		f = strings.Replace(f, "[{HASH}]", fields["hash"], -1)
-		cmdArgs = append(cmdArgs, f)
+	return commandToRecord[SimpleListCount](w, args)
+}
+
+func ChifraListCount(w *os.File, chain, address string) (uint64, error) {
+	callParams := map[string]string{
+		"chain":   chain,
+		"address": address,
+		"count":   "--count",
 	}
 
-	if result, err := commandToRecord[SimpleListCount](w, cmdArgs); err != nil {
-		return nil, err
-	} else {
-		if !silent {
-			fmt.Fprintln(w, result.String())
-		}
-		return &result, nil
+	result, err := ChifraList(w, callParams)
+	if err != nil {
+		return 0, err
 	}
+
+	return result.NRecords, nil
 }
 
 func (lc *SimpleListCount) String() string {
