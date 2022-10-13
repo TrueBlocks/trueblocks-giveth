@@ -2,6 +2,7 @@ package chifra
 
 import (
 	"fmt"
+	"math/big"
 	"strings"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/colors"
@@ -18,13 +19,19 @@ func (tr *SimpleTransfer) String() string {
 }
 
 type SimpleTransfer struct {
-	// TransactionIndex uint64 `json:"transactionIndex"`
-	// Timestamp        int64  `json:"timestamp"`
-	// Hash             string `json:"hash"`
-	BlockNumber uint64 `json:"blockNumber"`
-	Date        string `json:"date"`
-	Sender      string `json:"sender"`
-	Token       string `json:"token"`
-	Recipient   string `json:"recipient"`
-	Amount      string `json:"amount"`
+	Hash             string        `json:"hash"`
+	BlockNumber      uint64        `json:"blockNumber"`
+	TransactionIndex uint64        `json:"transactionIndex"`
+	Timestamp        int64         `json:"timestamp"`
+	Date             string        `json:"date"`
+	Ether            float64       `json:"ether"`
+	Value            big.Int       `json:"value"`
+	Sender           string        `json:"from"`
+	Token            string        `json:"to"`
+	Input            string        `json:"input"`
+	Encoding         string        `json:"encoding"`
+	ArticulatedTx    ArticulatedTx `json:"articulatedTx"`
+	CompressedTx     string        `json:"compressedTx"`
+	Recipient        string        `json:"recipient"`
+	Amount           string        `json:"amount"`
 }

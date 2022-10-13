@@ -10,7 +10,7 @@ import (
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/utils"
 )
 
-func ChifraTransactions(w *os.File, fields map[string]string) (*SimpleTransaction, error) {
+func ChifraTransactions(w *os.File, fields map[string]string) (*SimpleTransfer, error) {
 	args := []string{
 		"transactions",
 		"--no_header",
@@ -62,8 +62,8 @@ type ArticulatedTx struct {
 	Outputs map[string]string `json:"outputs"`
 }
 
-func TransactionToTransfer(tx *SimpleTransaction) (*SimpleTransaction, error) {
-	var ret SimpleTransaction
+func TransactionToTransfer(tx *SimpleTransaction) (*SimpleTransfer, error) {
+	var ret SimpleTransfer
 	ret.Sender = tx.Sender
 	ret.Token = tx.Token
 	ret.Date = tx.Date

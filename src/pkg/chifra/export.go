@@ -12,7 +12,7 @@ import (
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/validate"
 )
 
-func ChifraExport(w *os.File, tr *SimpleTransaction, chain string, depth, max_depth int, post postFunc) {
+func ChifraExport(w *os.File, tr *SimpleTransfer, chain string, depth, max_depth int, post postFunc) {
 	args := []string{
 		"export",
 		"--no_header",
