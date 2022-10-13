@@ -32,7 +32,7 @@ func ChifraTransactions(w *os.File, fields map[string]string) (*SimpleTransactio
 func (tx *SimpleTransaction) String() string {
 	d := colors.BrightBlue + strings.Split(tx.Date, ":")[0] + ":" + strings.Split(tx.Date, ":")[1] + colors.Off
 	s, _ := AddressToName(tx.Sender, false)
-	t, _ := AddressToName(tx.To, false)
+	t, _ := AddressToName(tx.Token, false)
 	r, _ := AddressToName(tx.Recipient, false)
 	a := "[" + colors.Yellow + utils.PadLeft(tx.Amount, 25, '.') + colors.Off + "]"
 	return fmt.Sprintf(" %s %s %s %s of %s to %s", d, s.Name, colors.BrightWhite+"donated"+colors.Off, a, t.Name, r.Name)
@@ -65,7 +65,7 @@ type ArticulatedTx struct {
 func TransactionToTransfer(tx *SimpleTransaction) (*SimpleTransaction, error) {
 	var ret SimpleTransaction
 	ret.Sender = tx.Sender
-	ret.To = tx.To
+	ret.Token = tx.Token
 	ret.Date = tx.Date
 	ret.BlockNumber = tx.BlockNumber
 
@@ -73,14 +73,12 @@ func TransactionToTransfer(tx *SimpleTransaction) (*SimpleTransaction, error) {
 		tx.Encoding = tx.Input[:10]
 
 	} else if len(tx.Input) < 10 {
-		ret.Recipient = tx.To
-		ret.To = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-		// tx.Amount = fmt.Sprintf("%f", tx.Ether)
+		ret.Recipient = tx.Token
+		ret.Token = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
 		ret.Amount = fmt.Sprintf("%d", tx.Value.Uint64())
 	}
 
 	if tx.Encoding == "0xa9059cbb" {
-		// compressedTx format is {name:transfer|inputs:{to:0xb2645970941b45f508b5333c1d628ad619adde20|value:200000000000000000000}|outputs:{_success:}}
 		removes := []string{
 			"{",
 			"}",

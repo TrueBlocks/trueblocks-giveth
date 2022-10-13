@@ -32,13 +32,15 @@ func ChifraExport(w *os.File, tr *SimpleTransaction, chain string, depth, max_de
 		"[{TOPIC}]",
 	}
 
-	if tr.To != "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" {
+	if tr.Token != "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" {
 		args = append(args, "--emitter")
 		args = append(args, "[{TOKEN}]")
+	} else {
+		return
 	}
 
 	fields := []string{"address", "chain", "token", "first", "last", "topic"}
-	values := []string{tr.Sender, chain, tr.To, firstBlocks[chain], fmt.Sprintf("%d", tr.BlockNumber), "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"}
+	values := []string{tr.Sender, chain, tr.Token, firstBlocks[chain], fmt.Sprintf("%d", tr.BlockNumber), "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"}
 	for f, field := range fields {
 		for i := 0; i < len(args); i++ {
 			args[i] = strings.Replace(args[i], "[{"+strings.ToUpper(field)+"}]", values[f], -1)
@@ -83,16 +85,13 @@ var postExportFunc = func(w *os.File, strIn string, filter func(string) bool) {
 			}
 
 		} else {
-			// fmt.Fprintln(w, colors.BrightBlack, "   ", strings.Repeat("-", 120), colors.Off)
 			lll = strings.Replace(lll, "{name:Transfer|inputs:{_amount:", "", -1)
 			lll = strings.Replace(lll, "_from:", "", -1)
 			lll = strings.Replace(lll, "_to:", "", -1)
 			lll = strings.Replace(lll, "}}", "", -1)
 			p := strings.Split(lll, "|")
 			ln = ln[:len(ln)-1]
-			// fmt.Fprintln(w, "len:", len(ln), len(p))
 			ln = append(ln, p...)
-			// fmt.Fprintln(w, "len:", len(ln), ln)
 			fieldLocs = []int{0, 1, 2, 3, 4, 5, 7, 8, 6}
 			fieldNames := []string{"blockNum", "txId", "logId", "hash", "date/tx_id", "token", "sender", "recip", "amount"}
 			if ln[6] != "0" { // do not show zero value stuff or ether details
