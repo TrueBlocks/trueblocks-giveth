@@ -12,7 +12,7 @@ import (
 )
 
 func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
-	hash, levels, max_rows, globals, err := getSofOptions(cmd, args)
+	hash, levels, _, globals, err := getSofOptions(cmd, args)
 	if err != nil {
 		return err
 	}
