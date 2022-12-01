@@ -4,7 +4,7 @@ This repo was used as part of this proposal to the Giveth forum: https://forum.g
 
 ## Command Line Tool
 
-We built a simple command line tool that currently allows us to download data from the Giveth APIs. While this is not all the data we need for the project, it's a start. We will documented the data structures [here](./data/QUESTIONS.md).
+We built a simple command line tool that allows us to download data from the Giveth APIs. While this is not all the data we need for the project, it's a start. We documented these data structures [here](./docs/Data%20Types.md).
 
 ```
 Data analysis for Giveth
