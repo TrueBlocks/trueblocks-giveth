@@ -1,7 +1,6 @@
 package chifra
 
 import (
-	"os"
 	"strings"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/colors"
@@ -68,8 +67,7 @@ var ColorList = []string{
 
 var colorMap = map[string]string{}
 
-func AddressToName(addrIn string) (*names.Name, error) {
-	decorated := os.Getenv("SHOW_ADDRS") == "true"
+func AddressToName(addrIn string, decorated bool) (*names.Name, error) {
 	if namesMap == nil {
 		nM, err := names.LoadNamesMap("mainnet")
 		if err != nil {
@@ -96,7 +94,7 @@ func AddressToName(addrIn string) (*names.Name, error) {
 
 	max := 54
 	if !decorated {
-		max = 30
+		max = 45
 	}
 	if len(name.Name) > max {
 		name.Name = name.Name[:max]
