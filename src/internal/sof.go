@@ -7,8 +7,6 @@ import (
 	"strings"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/colors"
-	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/validate"
-	"github.com/TrueBlocks/trueblocks-giveth/pkg/chifra"
 	"github.com/TrueBlocks/trueblocks-giveth/pkg/data"
 	"github.com/spf13/cobra"
 )
@@ -19,23 +17,17 @@ func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	w := os.Stdout
+
 	if len(hash) > 0 {
-		w := os.Stdout
-		if err := chifra.TraceSourceOfFunds(w, 0, int(levels), hash, globals.Chain); err != nil {
-			return err
-		}
+		Header(w, 0, levels, hash, globals.Chain)
+		fmt.Println(hash)
 
 	} else {
 		for _, round := range globals.Rounds {
 			donations, _ := data.NewDonations(data.GetFilename("eligible", "csv", round), "csv", data.SortByHash)
-			for i, donation := range donations {
-				if i < max_rows && validate.IsValidHash(donation.TxHash) {
-					w := os.Stdout
-					Header(w, round.Id, i, len(donations), donations[i].TxHash, donations[i].Network)
-					if err := chifra.TraceSourceOfFunds(w, 0, levels, donation.TxHash, donation.Network); err != nil {
-						return err
-					}
-				}
+			for _, donation := range donations {
+				fmt.Println(donation)
 			}
 		}
 	}
@@ -43,8 +35,8 @@ func RunSourceOfFunds(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func Header(w *os.File, roundId, i, l int, hash, chain string) {
-	fmt.Fprintln(w, "\n", colors.BrightBlack+strings.Repeat("-", 5), fmt.Sprintf("%d-%d-%d.", roundId, i, l), hash, chain, strings.Repeat("-", 70), colors.Off)
+func Header(w *os.File, i, l int, hash, chain string) {
+	fmt.Fprintln(w, strings.Repeat(" ", 120), "\n", colors.BrightBlack+strings.Repeat("-", 5), fmt.Sprintf("%d-%d.", i, l), hash, chain, strings.Repeat("-", 70), colors.Off)
 }
 
 // getSofOptions processes command line options for the Rounds command
