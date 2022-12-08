@@ -6,7 +6,7 @@ This repo was used as part of this proposal to the Giveth forum: https://forum.g
 
 We built a simple command line tool that allows us to download data from the Giveth APIs. While this is not all the data we need for the project, it's a start. We documented these data structures [here](./docs/Data%20Types.md).
 
-```
+```[shell]
 Data analysis for Giveth
 
 Usage:
@@ -41,21 +41,24 @@ These instructions assume you can navigate the command line and edit configurati
     - &#9745; Install the other dependencies with your command line: `build-essential` `git` `cmake` `ninja` `python` `python-dev` `libcurl3-dev` `clang-format` `jq`.
 
 1. Compile from the codebase
-    ```shell
-    git clone https://github.com/trueblocks/trueblocks-giveth
-    cd trueblocks-giveth
-    make
-    ```
+
+```[shell]
+git clone https://github.com/trueblocks/trueblocks-giveth
+cd trueblocks-giveth
+make
+```
 
 2. Add `./bin` to your shell `PATH`.
 
 3. Testing
-```shell
+
+```[shell]
 make test
 ```
+
 ## The API endpoint
 
-```
+```[shell]
 curl -X 'GET' 'https://givback.develop.giveth.io/purpleList' -H 'accept: application/json'
 ```
 
